@@ -7,6 +7,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const isochroneController = require('./isochroneController');
 const googleMapsController = require('./googleMapsController');
 const centroidController = require('./centroidController');
+const yelpController = require('./yelpController');
 const cors = require('cors');
 
 app.use(cors());
@@ -33,7 +34,9 @@ app.post(
   isochroneController.generateIsochrones,
   centroidController.getCentroid,
   googleMapsController.genGoogleMapsURL,
+  yelpController.getRadius,
   (req, res) => {
+    console.log('RES LOCALS', res.locals);
     res.status(200).json(res.locals);
   }
 );
