@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node server/server.js",
+    "start": "node server/server.js",
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development nodemon server/server.js & webpack-dev-server --open",
-    "test": "jest --watch"
+    "test": "jest"
   },
   "nodemonConfig": {
     "ignore": [
