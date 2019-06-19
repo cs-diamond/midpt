@@ -1,4 +1,5 @@
 const yelp = require('yelp-fusion');
+const turf = require('@turf/turf');
 const apiKey = process.env.YELP_API_KEY;
 
 const yelpController = {
@@ -61,6 +62,8 @@ const yelpController = {
       latitude: res.locals.midpt.lat,
       longitude: res.locals.midpt.lng,
       categories: 'coffee',
+      radius: res.locals.radius,
+      limit: 50,
     };
 
     const client = yelp.client(apiKey);
@@ -81,6 +84,50 @@ const yelpController = {
           yelpData.push(resultAtI);
         }
         res.locals.yelpData = yelpData;
+
+        let yelpPoints = yelpData.map(el => {
+          // console.log('el.coordinates', el.coordinates);
+          // console.log('el.coordinates.lat', el.coordinates.lat);
+          // console.log('el.coordinates.lng', el.coordinates.lng);
+          return [el.coordinates.lat, el.coordinates.lng];
+        });
+        // console.log('yelpPoints', yelpPoints);
+
+        // console.log('COORDSES', res.locals.coords);
+
+        yelpPoints = turf.points(yelpPoints);
+
+        let coords = res.locals.coords;
+
+        if (res.locals.coordsGeoType === 'Polygon') {
+          coords = turf.polygon(res.locals.coords);
+        } else {
+          coords = turf.polygon(res.locals.coords[0]);
+        }
+
+        console.log('yelpPoints', yelpPoints);
+        console.log('coords', coords);
+
+        let pointsWithin = turf.pointsWithinPolygon(yelpPoints, coords);
+
+        res.locals.pointsWithin = pointsWithin;
+
+        pointsWithin.features.forEach((el) => {
+          console.log('📍 pointsWithin latlong: ' + el.geometry.coordinates[0] + ', ' + el.geometry.coordinates[1]);
+        });
+        const filteredYelpData = [];
+        yelpData.forEach(el => {
+          console.log('📍 yelpData latlong: ' + el.coordinates.lat + ', ' + el.coordinates.lng);
+          pointsWithin.features.forEach(le => {
+            if ((el.coordinates.lat === le.geometry.coordinates[0]) && (el.coordinates.lng === le.geometry.coordinates[1])) {
+              filteredYelpData.push(el);
+            }
+          });
+        });
+
+        console.log('filteredYelpData', filteredYelpData)
+        res.locals.filteredYelpData = filteredYelpData;
+
         return next();
       })
       .catch(e => {

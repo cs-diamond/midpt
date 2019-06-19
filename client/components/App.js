@@ -89,9 +89,9 @@ class App extends Component {
             address1: data.addresses[0],
             address2: data.addresses[1],
             isochrones: data.isochrones,
+            yelps: data.filteredYelpData,
           },
           showForm: false,
-        });
       });
   }
   onRadioChange(e) {
