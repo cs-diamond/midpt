@@ -7,7 +7,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const isochroneController = require('./isochroneController');
 const googleMapsController = require('./googleMapsController');
 const centroidController = require('./centroidController');
+<<<<<<< HEAD
 const yelpController = require('./yelpController')
+=======
+const yelpController = require('./yelpController');
+>>>>>>> ab25dc17171a3fb19f2dc8303e0d3e9d410f6553
 const cors = require('cors');
 
 app.use(cors());
@@ -35,9 +39,15 @@ app.post(
   centroidController.getCentroid,
   yelpController.getNearby,
   googleMapsController.genGoogleMapsURL,
+<<<<<<< HEAD
   
   (req, res) => {
     console.log('end of middleware chain', res.locals);
+=======
+  yelpController.getRadius,
+  (req, res) => {
+    console.log('RES LOCALS', res.locals);
+>>>>>>> ab25dc17171a3fb19f2dc8303e0d3e9d410f6553
     res.status(200).json(res.locals);
   }
 );
