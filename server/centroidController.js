@@ -42,7 +42,7 @@ const centroidController = {
             ${thisPt.lat},${thisPt.lng}
             &destination=${midptArr[i].lat},${midptArr[i].lng}
             &departure_time=${res.locals.departureTimeUNIX}
-            &key=AIzaSyAIPJHK2bZuPPvTrXqf7C_pcZt_Kbft4ZA`,
+            &key=${process.env.GOOGLE_MAPS_API_KEY}`,
               (err, res, body) => {
                 console.log('💥 HAVE WE PASSED THE API LIMIT?', body);
                 if (err) console.log(err);
