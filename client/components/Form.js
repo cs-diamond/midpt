@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { useState } from 'react';
 import Input from '../components/Input';
 
 const onOther = (prevChecked, callback) => {
@@ -34,64 +34,90 @@ const onOther = (prevChecked, callback) => {
 };
 
 const Form = props => {
+  const [numLocationInputs, setNumLocationInputs] = useState(1);
+
+  const renderLocationInputs = () => {
+    return Array.from({ length: numLocationInputs }, () => {
+      return (
+        <React.Fragment>
+          <Input
+            key="a"
+            keyName="a"
+            onChange={props.onChange}
+            placeholder={props.placeholder}
+          />
+          <Input
+            key="b"
+            keyName="b"
+            onChange={props.onChange}
+            placeholder={props.placeholder}
+          />
+        </React.Fragment>
+      );
+    });
+  };
+
   let buttonSpace;
   if (!props.loading) {
     buttonSpace = (
-      <input type="button" value="Find Midpoint →" onClick={props.onClick}/>
+      <input type="button" value="Find Midpoint →" onClick={props.onClick} />
     );
   } else {
-    buttonSpace = (
-      <img src="/loading.gif" />
-    );
+    buttonSpace = <img src="/loading.gif" />;
   }
-  return (<form id="form">
-    <div className="locInputs">
-      <Input key="a" keyName="a" onChange={props.onChange} placeholder={props.placeholder}/>
-      <Input key="b" keyName="b" onChange={props.onChange} placeholder={props.placeholder}/>
-    </div>
-    <div className="locButtons">
-      <div className="timeRadio">
-        <span>Leaving</span>
-        <input
-          type="radio"
-          name="leaving"
-          id="now"
-          value={0}
-          onClick={props.onRadioChange}/>
-        <label htmlFor="now">Now</label>
-        <input
-          type="radio"
-          name="leaving"
-          id="p30min"
-          value={30 * 60}
-          onClick={props.onRadioChange}
-          defaultChecked="true"/>
-        <label htmlFor="p30min">{'In 30 mins'}</label>
-        <input type="radio"
-          name="leaving"
-          id="p1hr"
-          value={60 * 60}
-          onClick={props.onRadioChange}/>
-        <label htmlFor="p1hr">{'In 1 hour'}</label>
-        <input
-          type="radio"
-          name="leaving"
-          id="other"
-          value="other"
-          onClick={props.onRadioChange}/>
-        <label htmlFor="other">
+  return (
+    <form id="form">
+      <div className="locButtons">
+        <div className="locInputs">{renderLocationInputs()}</div>
+        <div className="timeRadio">
+          <span>Leaving</span>
           <input
-            type="text"
-            id="otherText"
-            placeholder="Other..."
-            onChange={() => onOther(props.radioVal, props.onRadioChange)}
-            onClick={() => onOther(props.radioVal, props.onRadioChange)}
-            pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"/>
-        </label>
+            type="radio"
+            name="leaving"
+            id="now"
+            value={0}
+            onClick={props.onRadioChange}
+          />
+          <label htmlFor="now">Now</label>
+          <input
+            type="radio"
+            name="leaving"
+            id="p30min"
+            value={30 * 60}
+            onClick={props.onRadioChange}
+            defaultChecked="true"
+          />
+          <label htmlFor="p30min">{'In 30 mins'}</label>
+          <input
+            type="radio"
+            name="leaving"
+            id="p1hr"
+            value={60 * 60}
+            onClick={props.onRadioChange}
+          />
+          <label htmlFor="p1hr">{'In 1 hour'}</label>
+          <input
+            type="radio"
+            name="leaving"
+            id="other"
+            value="other"
+            onClick={props.onRadioChange}
+          />
+          <label htmlFor="other">
+            <input
+              type="text"
+              id="otherText"
+              placeholder="Other..."
+              onChange={() => onOther(props.radioVal, props.onRadioChange)}
+              onClick={() => onOther(props.radioVal, props.onRadioChange)}
+              pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"
+            />
+          </label>
+        </div>
+        {buttonSpace}
       </div>
-      {buttonSpace}
-    </div>
-  </form>);
+    </form>
+  );
 };
 
 // onClick={() => selectOnInput(props.onRadioChange)}
