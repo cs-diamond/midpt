@@ -15,6 +15,7 @@ const GoogleMapsAPI = new Promise((res, err) => {
 
 const Maps = props => {
   const mapComponents = [];
+  console.log('PROPS from MAPS', props);
   if (props.result) {
     mapComponents.push(
       <VennMap

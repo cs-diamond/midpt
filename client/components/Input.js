@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 
-const Input = (props) => {
+const Input = props => {
   return (
     <div className="locInput">
-      <label htmlFor={"loc" + props.keyName}>📍</label>
-      <input type="text"
-        id={"loc" + props.keyName}
-        name={"loc" + props.keyName}
+      <label htmlFor={props.keyName}>📍</label>
+      <input
+        type="text"
+        id={props.keyName}
+        name={props.keyName}
         onChange={props.onChange}
-        placeholder={props.placeholder} />
+        placeholder={props.placeholder}
+      />
     </div>
   );
 };
