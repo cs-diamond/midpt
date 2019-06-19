@@ -34,8 +34,6 @@ app.post(
   centroidController.getCentroid,
   googleMapsController.genGoogleMapsURL,
   (req, res) => {
-    // console.log(res.locals);
-    // res.json({ fairTime: res.locals.fairTime });
     res.status(200).json(res.locals);
   }
 );
