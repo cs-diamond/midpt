@@ -54,11 +54,10 @@ isochroneController.generateRoutes = (req, res, next) => {
           &departure_time=${res.locals.departureTimeUNIX}
           &key=` + process.env.GOOGLE_MAPS_API_KEY,
           (err, res, body) => {
-            if (err) console.log(err);
-            console.log(JSON.parse(body));
-            resolve(
-              JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
-            );
+            if (err)
+              resolve(
+                JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
+              );
           }
         );
       })
@@ -72,15 +71,13 @@ isochroneController.generateRoutes = (req, res, next) => {
       ' and ',
       res.locals.addresses[1]
     );
-    console.log('user1 travel time is ', values[0] / 60);
-    console.log('user2 travel time is ', values[1] / 60);
+
     //the FAIR TIME ALGORITHM
     (res.locals.fairTime = Math.ceil(
       (1 - values[0] / (values[0] + values[1])) * values[0]
     )),
-      console.log('FAIR TIME', res.locals.fairTime);
-    // ✅ TEST: res.locals.fairTime should be a real number greater than 0
-    next();
+      // ✅ TEST: res.locals.fairTime should be a real number greater than 0
+      next();
   });
 };
 
@@ -138,18 +135,16 @@ isochroneController.generateIsochrones = (req, res, next) => {
         })
       );
     }
-    console.log(curIntersection);
+
     let coords = curIntersection.geometry.coordinates;
     res.locals.isoIntersectionPoints = [];
     if (curIntersection.geometry.type === 'Polygon') {
-      console.log('its a poly', coords);
       res.locals.isoIntersectionPoints.push(
         coords[0].map(el => {
           return { lat: el[0], lng: el[1] };
         })
       );
     } else {
-      console.log('its a multi');
       for (let i = 0; i < coords.length; i++) {
         res.locals.isoIntersectionPoints.push(
           coords[i][0].map(el => {
@@ -158,7 +153,6 @@ isochroneController.generateIsochrones = (req, res, next) => {
         );
       }
     }
-    debugger;
     next();
   }
 
