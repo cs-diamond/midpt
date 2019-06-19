@@ -1,5 +1,7 @@
-import React, {Component} from 'react';
-import Input from '../components/Input';
+import React, { useState } from 'react';
+import Inputs from './Inputs';
+import Icon from './Icon';
+import colors from '../scss/colors';
 
 const onOther = (prevChecked, callback) => {
   const textField = document.getElementById('otherText');
@@ -34,64 +36,122 @@ const onOther = (prevChecked, callback) => {
 };
 
 const Form = props => {
-  let buttonSpace;
-  if (!props.loading) {
-    buttonSpace = (
-      <input type="button" value="Find Midpoint →" onClick={props.onClick}/>
-    );
-  } else {
-    buttonSpace = (
+  const {
+    onChange,
+    onClick,
+    onRadioChange,
+    radioVal,
+    loading,
+    yelpCategory,
+    handleYelpCategoryInput,
+    yelpCategoryMatches,
+    selectYelpCategoryMatch,
+  } = props;
+  const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
+
+  const addMoreAddressInputs = () => {
+    event.preventDefault();
+    setNumLocationInputGroups(numLocationInputGroups + 1);
+  };
+
+  const renderButton = () => {
+    return loading ? (
       <img src="/loading.gif" />
+    ) : (
+      <input
+        className="button findMidptButton"
+        type="button"
+        value="Find Midpoint →"
+        onClick={onClick}
+      />
     );
-  }
-  return (<form id="form">
-    <div className="locInputs">
-      <Input key="a" keyName="a" onChange={props.onChange} placeholder={props.placeholder}/>
-      <Input key="b" keyName="b" onChange={props.onChange} placeholder={props.placeholder}/>
-    </div>
-    <div className="locButtons">
-      <div className="timeRadio">
-        <span>Leaving</span>
-        <input
-          type="radio"
-          name="leaving"
-          id="now"
-          value={0}
-          onClick={props.onRadioChange}/>
-        <label htmlFor="now">Now</label>
-        <input
-          type="radio"
-          name="leaving"
-          id="p30min"
-          value={30 * 60}
-          onClick={props.onRadioChange}
-          defaultChecked="true"/>
-        <label htmlFor="p30min">{'In 30 mins'}</label>
-        <input type="radio"
-          name="leaving"
-          id="p1hr"
-          value={60 * 60}
-          onClick={props.onRadioChange}/>
-        <label htmlFor="p1hr">{'In 1 hour'}</label>
-        <input
-          type="radio"
-          name="leaving"
-          id="other"
-          value="other"
-          onClick={props.onRadioChange}/>
-        <label htmlFor="other">
-          <input
-            type="text"
-            id="otherText"
-            placeholder="Other..."
-            onChange={() => onOther(props.radioVal, props.onRadioChange)}
-            onClick={() => onOther(props.radioVal, props.onRadioChange)}
-            pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"/>
-        </label>
+  };
+
+  const renderYelpCategoryMatches = () => {
+    return yelpCategoryMatches.map(category => {
+      if (yelpCategoryMatches === []) return null;
+      return <li onClick={e => selectYelpCategoryMatch(e)}>{category}</li>;
+    });
+  };
+
+  return (
+    <form id="form" className="formContainer">
+      <div className="formFlexGroup">
+        <button
+          onClick={addMoreAddressInputs}
+          className="button moreAddressesButton"
+        >
+          <Icon name="plus" color={colors.blue} />
+        </button>
+        <Inputs
+          numLocationInputGroups={numLocationInputGroups}
+          onChange={onChange}
+        />
+        <div className="locButtons">
+          <div className="timeRadio">
+            <span className="inputLabel">Leaving</span>
+            <input
+              type="radio"
+              name="leaving"
+              id="now"
+              value={0}
+              onClick={onRadioChange}
+            />
+            <label htmlFor="now">Now</label>
+            <input
+              type="radio"
+              name="leaving"
+              id="p30min"
+              value={30 * 60}
+              onClick={onRadioChange}
+              defaultChecked="true"
+            />
+            <label htmlFor="p30min">{'In 30 mins'}</label>
+            <input
+              type="radio"
+              name="leaving"
+              id="p1hr"
+              value={60 * 60}
+              onClick={onRadioChange}
+            />
+            <label htmlFor="p1hr">{'In 1 hour'}</label>
+            <input
+              type="radio"
+              name="leaving"
+              id="other"
+              value="other"
+              onClick={onRadioChange}
+            />
+            <label htmlFor="other">
+              <input
+                type="text"
+                id="otherText"
+                placeholder="Other..."
+                onChange={() => onOther(radioVal, onRadioChange)}
+                onClick={() => onOther(radioVal, onRadioChange)}
+                pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"
+              />
+            </label>
+            <span className="inputLabel yelpCategory">Meet at</span>
+            <label className="yelpCategory" htmlFor="yelp-category">
+              <div className="yelpCategory">
+                <input
+                  type="text"
+                  id="yelpCategory"
+                  placeholder="☕️ Cafes, 🍽 Restaurants, 🍸 Bars"
+                  onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+                />
+                <ul className="yelpCategoryMatches">
+                  {renderYelpCategoryMatches()}
+                </ul>
+              </div>
+            </label>
+          </div>
+        </div>
       </div>
-      {buttonSpace}
-    </div>
-  </form>);
+      {renderButton()}
+    </form>
+  );
 };
 
 // onClick={() => selectOnInput(props.onRadioChange)}

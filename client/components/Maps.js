@@ -15,6 +15,7 @@ const GoogleMapsAPI = new Promise((res, err) => {
 
 const Maps = props => {
   const mapComponents = [];
+  console.log('PROPS from MAPS', props);
   if (props.result) {
     mapComponents.push(
       <VennMap
@@ -22,6 +23,7 @@ const Maps = props => {
         isochrones={props.result.isochrones}
         midpt={props.result.midpt}
         time="7:00"
+        yelps={props.result.yelps}
       />
     );
     if (props.result.point1) {

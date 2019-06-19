@@ -2,45 +2,75 @@ import React, { Component } from 'react';
 import Maps from '../components/Maps';
 import Form from '../components/Form';
 
-function getInitialState() {
-  return {
-    placeholder: 'Enter an address...',
-    radioName: 'p30min',
-    radioVal: 30 * 60,
-    showForm: true
-  };
-}
+const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = getInitialState();
+    this.state = {
+      radioName: 'p30min',
+      radioVal: 30 * 60,
+      showForm: true,
+      yelpCategory: '',
+      yelpCategoryMatch: '',
+      yelpCategoryMatches: [],
+    };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onRadioChange = this.onRadioChange.bind(this);
+    this.handleYelpCategoryInput = this.handleYelpCategoryInput.bind(this);
+    this.displayYelpMatches = this.displayYelpMatches.bind(this);
+    this.findMatches = this.findMatches.bind(this);
+    this.selectYelpCategoryMatch = this.selectYelpCategoryMatch.bind(this);
   }
   onChange(e) {
     this.setState({
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
+    });
+  }
+
+  findMatches(categoryToMatch, categories) {
+    return categories.filter(category => {
+      const regex = new RegExp(categoryToMatch, 'gi');
+      return category.match(regex);
+    });
+  }
+
+  displayYelpMatches(value) {
+    const matchArray = this.findMatches(value, YELP_CATEGORIES);
+    return matchArray;
+  }
+
+  handleYelpCategoryInput(e, value) {
+    const matches = this.displayYelpMatches(value);
+    this.setState({
+      yelpCategory: e.target.value,
+      yelpCategoryMatches: matches,
+    });
+  }
+
+  selectYelpCategoryMatch(e) {
+    this.setState({
+      yelpCategoryMatch: e.target.innerText,
     });
   }
   onClick(e) {
-    console.log(this.state.loca + ' 📍 ' + this.state.locb);
+    console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
     let departureTime = new Date(Date.now() + this.state.radioVal * 1000);
     departureTime = departureTime.toISOString();
     console.log('(' + departureTime + ')');
     const data = {
-      points: [this.state.loca, this.state.locb],
-      departureTime: departureTime
+      points: [this.state.locInput0a, this.state.locInput0b],
+      departureTime: departureTime,
     };
     this.setState({ loading: true });
     fetch('http://localhost:3000/buildroute', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
       .then(response => {
         console.log('raw server response', response);
@@ -58,41 +88,41 @@ class App extends Component {
             bToMidptURL: data.directionURLs[1],
             address1: data.addresses[0],
             address2: data.addresses[1],
-            isochrones: data.isochrones
+            isochrones: data.isochrones,
+            yelps: data.filteredYelpData,
           },
-          showForm: false
+          showForm: false,
         });
       });
   }
   onRadioChange(e) {
     this.setState({
       radioVal: [e.target.value],
-      radioName: [e.target.id]
+      radioName: [e.target.id],
     });
   }
   hasUpdatedMap() {
     this.setState({ shouldUpdateMap: false });
   }
   render() {
-    let form;
-    if (this.state.showForm) {
-      form = (
-        <Form
-          onChange={this.onChange}
-          onClick={this.onClick}
-          radioVal={this.state.radioName}
-          onRadioChange={this.onRadioChange}
-          placeholder={this.state.placeholder}
-          loading={this.state.loading}
-        />
-      );
-    } else {
-      form = '';
-    }
+    const { showForm, yelpCategory, yelpCategoryMatches } = this.state;
     return (
       <div className="App">
         <h1>midpt</h1>
-        {form}
+        {showForm && (
+          <Form
+            onChange={this.onChange}
+            onClick={this.onClick}
+            radioVal={this.state.radioName}
+            onRadioChange={this.onRadioChange}
+            placeholder={this.state.placeholder}
+            loading={this.state.loading}
+            yelpCategory={yelpCategory}
+            handleYelpCategoryInput={this.handleYelpCategoryInput}
+            yelpCategoryMatches={yelpCategoryMatches}
+            selectYelpCategoryMatch={this.selectYelpCategoryMatch}
+          />
+        )}
         <Maps result={this.state.result} />
       </div>
     );
