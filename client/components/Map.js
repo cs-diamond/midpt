@@ -47,7 +47,7 @@ const Map = props => {
           {' (' + city + ') '}
           <strong>{'to Midpoint'}</strong>
         </span>
-        <a href={props.url}>Directions</a>
+        <a href={props.url} target="_blank">Directions</a>
       </div>
       <figure className="map" id={id} />
     </div>

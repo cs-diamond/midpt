@@ -62,6 +62,8 @@ const yelpController = {
       latitude: res.locals.midpt.lat,
       longitude: res.locals.midpt.lng,
       categories: 'coffee',
+      radius: res.locals.radius,
+      limit: 50,
     };
 
     const client = yelp.client(apiKey);
@@ -94,7 +96,14 @@ const yelpController = {
         // console.log('COORDSES', res.locals.coords);
 
         yelpPoints = turf.points(yelpPoints);
-        let coords = turf.polygon(res.locals.coords[0]);
+
+        let coords = res.locals.coords;
+
+        if (res.locals.coordsGeoType === 'Polygon') {
+          coords = turf.polygon(res.locals.coords);
+        } else {
+          coords = turf.polygon(res.locals.coords[0]);
+        }
 
         console.log('yelpPoints', yelpPoints);
         console.log('coords', coords);

@@ -143,6 +143,7 @@ isochroneController.generateIsochrones = (req, res, next) => {
     //console.log(curIntersection);
     let coords = curIntersection.geometry.coordinates;
     res.locals.coords = coords;
+    res.locals.coordsGeoType = curIntersection.geometry.type;
     res.locals.isoIntersectionPoints = [];
     if (curIntersection.geometry.type === 'Polygon') {
       //console.log('its a poly', coords);
