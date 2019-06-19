@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Input from '../components/Input';
+import Icon from '../components/Icon';
+import colors from '../scss/colors';
 
 const onOther = (prevChecked, callback) => {
   const textField = document.getElementById('otherText');
@@ -67,7 +69,9 @@ const Form = props => {
   }
   return (
     <form id="form">
-      <button className="moreAddressesButton">+</button>
+      <button className="moreAddressesButton">
+        <Icon name="plus" color={colors.blue} />
+      </button>
       {renderLocationInputs()}
       <div className="locButtons">
         <div className="timeRadio">
