@@ -78,8 +78,9 @@ isochroneController.generateRoutes = (req, res, next) => {
     (res.locals.fairTime = Math.ceil(
       (1 - values[0] / (values[0] + values[1])) * values[0]
     )),
-      // ✅ TEST: res.locals.fairTime should be a real number greater than 0
-      next();
+      console.log('FAIR TIME', res.locals.fairTime);
+    // ✅ TEST: res.locals.fairTime should be a real number greater than 0
+    next();
   });
 };
 
@@ -157,6 +158,7 @@ isochroneController.generateIsochrones = (req, res, next) => {
         );
       }
     }
+    debugger;
     next();
   }
 
