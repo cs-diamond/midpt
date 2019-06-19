@@ -20,7 +20,14 @@ export default function Icon({
           xmlns="http://www.w3.org/2000/svg"
         >
           <g transform="translate(3 3)" fill="none" fillRule="evenodd">
-            <circle stroke={color} strokeWidth="6" cx="76" cy="76" r="76" />
+            <circle
+              stroke={color}
+              fill={color ? '' : color}
+              strokeWidth="6"
+              cx="76"
+              cy="76"
+              r="76"
+            />
             <g fill={color}>
               <path d="M73 35h7v82h-7z" />
               <path d="M117.5 72.5v7h-82v-7z" />
