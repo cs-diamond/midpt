@@ -41,37 +41,42 @@ isochroneController.getCoords = (req, res, next) => {
 
 isochroneController.generateRoutes = (req, res, next) => {
   const promArr = [];
-  for (let i = 0; i < req.body['points'].length; i++) {
-    promArr.push(
-      new Promise((resolve, reject) => {
-        //this syntax is just to make the code iterable
-        const thisPt = res.locals.points[i % res.locals.points.length];
-        const otherPt = res.locals.points[(i + 1) % res.locals.points.length];
-        //grabbing initial route info for FAIR TIME ALGORITHM
-        request.get(
-          `https://maps.googleapis.com/maps/api/directions/json?origin=
-          ${thisPt.lat},${thisPt.lng}
-          &destination=${otherPt.lat},${otherPt.lng}
-          &departure_time=${res.locals.departureTimeUNIX}
-          &key=` + process.env.GOOGLE_MAPS_API_KEY,
-          (err, res, body) => {
-            if (err) console.log(err);
-            console.log(JSON.parse(body));
-            resolve(
-              JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
-            );
-          }
+  let n = req.body['points'].length;
+  for (let i = 0; i < n ; i += 1) {
+    for (let j = 0; j < n; j += 1) {
+      if (i !== j) {
+        promArr.push(
+          new Promise((resolve, reject) => {
+            //this syntax is just to make the code iterable
+            const thisPt = res.locals.points[i % res.locals.points.length];
+            const otherPt = res.locals.points[j % res.locals.points.length];
+            //grabbing initial route info for FAIR TIME ALGORITHM
+            request.get(
+              `https://maps.googleapis.com/maps/api/directions/json?origin=
+               ${thisPt.lat},${thisPt.lng}
+               &destination=${otherPt.lat},${otherPt.lng}
+               &departure_time=${res.locals.departureTimeUNIX}
+               &key=` + process.env.GOOGLE_MAPS_API_KEY,
+              (err, res, body) => {
+                if (err) reject(err);
+                console.log(JSON.parse(body));
+                resolve(
+                  JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
+                );
+              });
+          })
         );
-      })
-    );
+      }
+    }
   }
   //waits for queries and then logs travel times for verification and developer peace of mind
   Promise.all(promArr).then(values => {
+    console.log('FAIRTIME VALUES', values);
     for (let i = 0; i < res.locals.addresses.length; i += 1) {
       console.log(`finding a midpt for user${i + 1} at ${res.locals.addresses[i]} - estimated travel time is ${values[i] / 60}`)
     }
-    //the FAIR TIME ALGORITHM
-    (res.locals.fairTime = Math.ceil((1 - values[0] / (values[0] + values[1])) * values[0]));
+    //the FAIR TIME ALGORITHM for 2 people
+    res.locals.fairTime = Math.ceil((1 - values[0] / (values[0] + values[1])) * values[0]);
     console.log('FAIR TIME', res.locals.fairTime);
     // ✅ TEST: res.locals.fairTime should be a real number greater than 0
     next();
