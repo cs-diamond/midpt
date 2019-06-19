@@ -127,9 +127,11 @@ isochroneController.generateIsochrones = (req, res, next) => {
         );
       }
       curIntersection = turf.intersect(
+        //intersection vertices
         friendIsochrones[0],
         friendIsochrones[1]
       );
+      console.log('curInstersection:',curIntersection);
       timeToTry = Math.ceil(timeToTry * 1.2);
     }
     res.locals.isochrones = [];
