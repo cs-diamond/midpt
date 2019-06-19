@@ -4,7 +4,6 @@ const centroidController = {
     // find the centroid of a polygon defined by these lat & lng points as vertices.
     // rounded to 7 decimal places.
     // formula: (p1 + ... + pn) / numPoints
-    // console.log(res.locals.isoIntersectionPoints);
     let centroid; //Centroid will be the midpoint of each isochrone, calculated on 14-18
     const midptArr = [];
     const latLngArr = res.locals.isoIntersectionPoints; //reduces total characters, not necessary
@@ -26,7 +25,7 @@ const centroidController = {
       //with each centroid calculated, we shave off the bad rounding, and store them in the array res.locals.midpt
       midptArr.push({
         lat: Math.round(10000000 * centroid.lat) / 10000000,
-        lng: Math.round(10000000 * centroid.lng) / 10000000
+        lng: Math.round(10000000 * centroid.lng) / 10000000,
       });
     });
     let promArr = [];
@@ -45,6 +44,7 @@ const centroidController = {
             &departure_time=${res.locals.departureTimeUNIX}
             &key=AIzaSyAIPJHK2bZuPPvTrXqf7C_pcZt_Kbft4ZA`,
               (err, res, body) => {
+                console.log('💥 HAVE WE PASSED THE API LIMIT?', body);
                 if (err) console.log(err);
                 resolve(
                   JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
@@ -66,13 +66,13 @@ const centroidController = {
           bestTracker = i / 2;
         }
       }
-      //Overwrite the composite arrays with the best array, to facillitate passing it back to the front end
+      //Overwrite the composite arrays with the best array, to facilitate passing it back to the front end
       res.locals.isoIntersectionPoints = latLngArr[bestTracker];
-      // console.log('midpoint found ! ', res.locals.midpt[bestTracker]); //for testing
       res.locals.midpt = midptArr[bestTracker];
+      // ✅ TEST: res.locals.midpt should be an array of objects with lat/lng properties
       next();
     });
-  }
+  },
 };
 
 module.exports = centroidController;

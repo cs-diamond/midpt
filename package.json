@@ -6,7 +6,8 @@
   "scripts": {
     "start": "NODE_ENV=production node server/server.js",
     "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development nodemon server/server.js & webpack-dev-server --open"
+    "dev": "NODE_ENV=development nodemon server/server.js & webpack-dev-server --open",
+    "test": "jest --watch"
   },
   "nodemonConfig": {
     "ignore": [
@@ -42,9 +43,11 @@
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
     "isomorphic-fetch": "^2.2.1",
+    "jest": "^24.8.0",
     "mini-css-extract-plugin": "^0.7.0",
     "nodemon": "^1.18.9",
     "style-loader": "^0.23.1",
+    "supertest": "^4.0.2",
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.7.1"
   }

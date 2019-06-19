@@ -13,7 +13,9 @@ isochroneController.getCoords = (req, res, next) => {
   const dateObj = new Date(req.body.departureTime);
   res.locals.departureTimeISO = dateObj.toISOString(); // for time travel api
   res.locals.departureTimeUNIX = Math.round(dateObj.valueOf() / 1000); //for google api
-  // console.log('reqbody', req.body);
+  // ✅ TEST: res.locals.departureTimeUNIX should be valid UNIX time
+  // ✅ TEST: res.locals.departureTimeUNIX should be an integer
+
   let promArr = [];
   for (let i = 0; i < 2; i++) {
     //removes whitespace, formats for queries
@@ -25,7 +27,9 @@ isochroneController.getCoords = (req, res, next) => {
       //catches each address and formats it into usable data
       ptsAddresses.forEach(ptAddressObj => {
         res.locals.addresses.push(ptAddressObj.formatted_address);
+        // ✅ TEST: res.locals.address should have the correct string format
         res.locals.points.push(ptAddressObj.latLng);
+        // ✅ TEST: res.locals.address should have the correct lat/lng format
       });
       return next();
     })
@@ -74,6 +78,7 @@ isochroneController.generateRoutes = (req, res, next) => {
     (res.locals.fairTime = Math.ceil(
       (1 - values[0] / (values[0] + values[1])) * values[0]
     )),
+      // ✅ TEST: res.locals.fairTime should be a real number greater than 0
       next();
   });
 };
@@ -109,7 +114,6 @@ isochroneController.generateIsochrones = (req, res, next) => {
                 `&key=${process.env.BING_MAPS_API_KEY}`,
               (err, res, body) => {
                 if (err) res.status(404).send(err);
-                // console.log(JSON.parse(body));
                 const arrayOfLatLngPoints = JSON.parse(body).resourceSets[0]
                   .resources[0].polygons[0].coordinates[0];
                 // sometimes it might not be one polygon!!! so would need to have multiple i's for coordinates
@@ -152,15 +156,13 @@ isochroneController.generateIsochrones = (req, res, next) => {
           })
         );
       }
-      // console.log(res.locals.isoIntersectionPoints);
     }
-    // console.log('intersection found!!!!', res.locals.isoIntersectionPoints);
     next();
   }
 
   tryIntersection(res.locals.fairTime);
+  // ✅ TEST: res.locals.isoIntersectionPoints should be an array of objects containing lat/lng properties
+  // ✅ TEST: res.locals.isochrones should be an array of objects containing lat/lng properties
 };
 
 module.exports = isochroneController;
-
-//'https://dev.virtualearth.net/REST/v1/Routes/Isochrones?dateTime=06/17/2019&waypoint=34.147449,-118.144272&maxTime=1800&distanceUnit=mile&optimize=timeWithTraffic&travelMode=driving&key=AsTqvk3W-QPHFNCKKAXlTdy7z_3C46CUXGV0sNMQj2XSjGsD6tOnk7dr3dd_f4BB');
