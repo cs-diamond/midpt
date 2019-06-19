@@ -11,6 +11,7 @@ const centroidController = {
       //checks if we have an isochrone intersection. We should always have an isochrone intersection
       return 'error ! no intersection found :/ fairTime is probably calculated wrong';
     }
+    console.log('LATLNGARR = ', latLngArr);
     latLngArr.forEach(el => {
       //since latLngArr is an array of arrays of objects, we need to go through the layers
       centroid = el.reduce(
@@ -29,7 +30,6 @@ const centroidController = {
       });
     });
     let promArr = [];
-    let resArr = [];
     //This block is to evaluate which centroid in res.locals.midpt is most efficient for both users
     for (let i = 0; i < midptArr.length; i++) {
       for (let j = 0; j < 2; j++) {
@@ -45,7 +45,7 @@ const centroidController = {
             &key=${process.env.GOOGLE_MAPS_API_KEY}`,
               (err, res, body) => {
                 //console.log('💥 HAVE WE PASSED THE API LIMIT?', body);
-                if (err) console.log(err);
+                if (err) reject(err);
                 resolve(
                   JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
                 );

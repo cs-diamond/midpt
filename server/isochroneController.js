@@ -7,6 +7,7 @@ const geocode = require('./geocode');
 const isochroneController = {};
 //this function turns addresses into latitude and longitude coordinates
 isochroneController.getCoords = (req, res, next) => {
+  console.log('REQ', req);
   res.locals.addresses = [];
   res.locals.points = [];
   //gets the time for our navigation queries
@@ -17,7 +18,7 @@ isochroneController.getCoords = (req, res, next) => {
   // ✅ TEST: res.locals.departureTimeUNIX should be an integer
 
   let promArr = [];
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < req.body['points'].length; i++) {
     //removes whitespace, formats for queries
     let parsedStr = req.body['points'][i].replace(' ', '+');
     promArr.push(geocode(parsedStr));
@@ -40,7 +41,7 @@ isochroneController.getCoords = (req, res, next) => {
 
 isochroneController.generateRoutes = (req, res, next) => {
   const promArr = [];
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < req.body['points'].length; i++) {
     promArr.push(
       new Promise((resolve, reject) => {
         //this syntax is just to make the code iterable
@@ -66,19 +67,12 @@ isochroneController.generateRoutes = (req, res, next) => {
   }
   //waits for queries and then logs travel times for verification and developer peace of mind
   Promise.all(promArr).then(values => {
-    console.log(
-      'finding a midpt between ',
-      res.locals.addresses[0],
-      ' and ',
-      res.locals.addresses[1]
-    );
-    console.log('user1 travel time is ', values[0] / 60);
-    console.log('user2 travel time is ', values[1] / 60);
+    for (let i = 0; i < res.locals.addresses.length; i += 1) {
+      console.log(`finding a midpt for user${i + 1} at ${res.locals.addresses[i]} - estimated travel time is ${values[i] / 60}`)
+    }
     //the FAIR TIME ALGORITHM
-    (res.locals.fairTime = Math.ceil(
-      (1 - values[0] / (values[0] + values[1])) * values[0]
-    )),
-      console.log('FAIR TIME', res.locals.fairTime);
+    (res.locals.fairTime = Math.ceil((1 - values[0] / (values[0] + values[1])) * values[0]));
+    console.log('FAIR TIME', res.locals.fairTime);
     // ✅ TEST: res.locals.fairTime should be a real number greater than 0
     next();
   });
@@ -86,23 +80,19 @@ isochroneController.generateRoutes = (req, res, next) => {
 
 isochroneController.generateIsochrones = (req, res, next) => {
   // finds isochrones around the two user points using the Bing API, and then finds the intersection polygons of those isochrones using turf.js
-  // if there is no intersectuion, the while loop runs again with a higher fairTime until it finds a result. however, it mostly succeeds on the first try!
+  // if there is no intersection, the while loop runs again with a higher fairTime until it finds a result. however, it mostly succeeds on the first try!
 
   let friendIsochrones = [];
   async function tryIntersection(time) {
     let curIntersection = null;
     let timeToTry = time;
     while (!curIntersection) {
-      // timeToTry = 1500;
-      // timeToTry = timeToTry * 1.2;
-
-      
       console.log(
         'trying isochrone intersection with a fairTime of ',
         timeToTry / 60
       );
       friendIsochrones = [];
-      for (let i = 0; i < 2; i += 1) {
+      for (let i = 0; i < res.locals.addresses.length; i += 1) {
         friendIsochrones.push(
           await new Promise((resolve, reject) => {
             const thisPt = res.locals.points[i % res.locals.points.length];
@@ -126,25 +116,20 @@ isochroneController.generateIsochrones = (req, res, next) => {
           })
         );
       }
-      curIntersection = turf.intersect(
-        friendIsochrones[0],
-        friendIsochrones[1]
-      );
+      curIntersection = turf.intersect(...friendIsochrones);
       timeToTry = Math.ceil(timeToTry * 1.2);
     }
     res.locals.isochrones = [];
-    for (let i = 0; i < 2; i += 1) {
+    for (let i = 0; i < res.locals.addresses.length; i += 1) {
       res.locals.isochrones.push(
         friendIsochrones[i].geometry.coordinates[0].map(point => {
           return { lat: point[0], lng: point[1] };
         })
       );
     }
-    //console.log(curIntersection);
     let coords = curIntersection.geometry.coordinates;
     res.locals.isoIntersectionPoints = [];
     if (curIntersection.geometry.type === 'Polygon') {
-      //console.log('its a poly', coords);
       res.locals.isoIntersectionPoints.push(
         coords[0].map(el => {
           return { lat: el[0], lng: el[1] };
