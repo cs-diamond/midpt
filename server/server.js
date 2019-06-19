@@ -7,6 +7,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const isochroneController = require('./isochroneController');
 const googleMapsController = require('./googleMapsController');
 const centroidController = require('./centroidController');
+const yelpController = require('./yelpController')
 const cors = require('cors');
 
 app.use(cors());
@@ -32,9 +33,11 @@ app.post(
   isochroneController.generateRoutes,
   isochroneController.generateIsochrones,
   centroidController.getCentroid,
+  yelpController.getNearby,
   googleMapsController.genGoogleMapsURL,
+  
   (req, res) => {
-    console.log(res.locals);
+    console.log('end of middleware chain', res.locals);
     res.status(200).json(res.locals);
   }
 );
