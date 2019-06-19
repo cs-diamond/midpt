@@ -39,7 +39,7 @@ const Form = props => {
   const renderLocationInputs = () => {
     return Array.from({ length: numLocationInputs }, () => {
       return (
-        <React.Fragment>
+        <div className="locInputs">
           <Input
             key="a"
             keyName="a"
@@ -52,7 +52,7 @@ const Form = props => {
             onChange={props.onChange}
             placeholder={props.placeholder}
           />
-        </React.Fragment>
+        </div>
       );
     });
   };
@@ -67,8 +67,9 @@ const Form = props => {
   }
   return (
     <form id="form">
+      <button className="moreAddressesButton">+</button>
+      {renderLocationInputs()}
       <div className="locButtons">
-        <div className="locInputs">{renderLocationInputs()}</div>
         <div className="timeRadio">
           <span>Leaving</span>
           <input
