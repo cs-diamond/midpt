@@ -55,13 +55,13 @@ class App extends Component {
     });
   }
   onClick(e) {
-    console.log(this.state.loca + ' 📍 ' + this.state.locb);
+    console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
     let departureTime = new Date(Date.now() + this.state.radioVal * 1000);
     departureTime = departureTime.toISOString();
     console.log('(' + departureTime + ')');
     const data = {
-      points: [this.state.loca, this.state.locb],
+      points: [this.state.locInput0a, this.state.locInput0b],
       departureTime: departureTime,
     };
     this.setState({ loading: true });
@@ -92,6 +92,7 @@ class App extends Component {
             yelps: data.filteredYelpData,
           },
           showForm: false,
+        });
       });
   }
   onRadioChange(e) {
@@ -122,6 +123,7 @@ class App extends Component {
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
           />
         )}
+        <Maps result={this.state.result} />
       </div>
     );
   }

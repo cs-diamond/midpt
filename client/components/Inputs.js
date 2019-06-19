@@ -11,14 +11,14 @@ const Inputs = props => {
       return (
         <div className="locInputs">
           <Input
-            key={`loc-input-${index}-a`}
-            keyName={`loc-input-${index}-a`}
+            key={`locInput${index}a`}
+            keyName={`locInput${index}a`}
             onChange={onChange}
             placeholder={PLACEHOLDERS.active}
           />
           <Input
-            key={`loc-input-${index}-b`}
-            keyName={`loc-input-${index}-b`}
+            key={`locInput${index}b`}
+            keyName={`locInput${index}b`}
             onChange={onChange}
             placeholder={PLACEHOLDERS.inactive}
           />
