@@ -58,7 +58,8 @@ class App extends Component {
             bToMidptURL: data.directionURLs[1],
             address1: data.addresses[0],
             address2: data.addresses[1],
-            isochrones: data.isochrones
+            isochrones: data.isochrones,
+            yelps: data.filteredYelpData,
           },
           showForm: false
         });

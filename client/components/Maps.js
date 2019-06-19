@@ -22,6 +22,7 @@ const Maps = props => {
         isochrones={props.result.isochrones}
         midpt={props.result.midpt}
         time="7:00"
+        yelps={props.result.yelps}
       />
     );
     if (props.result.point1) {

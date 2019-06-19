@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-function initMap(isochrones, midpt) {
+function initMap(isochrones, midpt, yelps) {
   let map = new google.maps.Map(document.getElementById('vennMap'), {
     zoom: 10,
     center: midpt,
@@ -30,11 +30,25 @@ function initMap(isochrones, midpt) {
     fillOpacity: 0.35
   });
   polyB.setMap(map);
+  console.log('YELPS', yelps);
+  yelps.forEach(el => {
+    let marker = new google.maps.Marker({
+      position: el.coordinates,
+      map: map,
+      title: el.name
+    });
+  });
 };
+
+// var marker = new google.maps.Marker({
+//   position: myLatLng,
+//   map: map,
+//   title: 'Hello World!'
+// });
 
 const VennMap = (props) => {
   setTimeout(() => {
-    initMap(props.isochrones, props.midpt);
+    initMap(props.isochrones, props.midpt, props.yelps);
   }, 1000);
   return (
     <div>
