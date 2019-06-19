@@ -34,6 +34,7 @@ app.post(
   centroidController.getCentroid,
   googleMapsController.genGoogleMapsURL,
   (req, res) => {
+    console.log(res.locals);
     res.status(200).json(res.locals);
   }
 );

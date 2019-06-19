@@ -7,7 +7,8 @@
     "start": "node server/server.js",
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development nodemon server/server.js & webpack-dev-server --open",
-    "test": "jest"
+    "test": "jest --watch",
+    "debug": "ODE_ENV=development nodemon server/server.js --inspect & webpack-dev-server --open"
   },
   "nodemonConfig": {
     "ignore": [
