@@ -95,6 +95,8 @@ isochroneController.generateIsochrones = (req, res, next) => {
     while (!curIntersection) {
       // timeToTry = 1500;
       // timeToTry = timeToTry * 1.2;
+
+      
       console.log(
         'trying isochrone intersection with a fairTime of ',
         timeToTry / 60
@@ -138,11 +140,11 @@ isochroneController.generateIsochrones = (req, res, next) => {
         })
       );
     }
-    console.log(curIntersection);
+    //console.log(curIntersection);
     let coords = curIntersection.geometry.coordinates;
     res.locals.isoIntersectionPoints = [];
     if (curIntersection.geometry.type === 'Polygon') {
-      console.log('its a poly', coords);
+      //console.log('its a poly', coords);
       res.locals.isoIntersectionPoints.push(
         coords[0].map(el => {
           return { lat: el[0], lng: el[1] };
@@ -158,7 +160,7 @@ isochroneController.generateIsochrones = (req, res, next) => {
         );
       }
     }
-    debugger;
+    //debugger;
     next();
   }
 

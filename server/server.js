@@ -33,10 +33,11 @@ app.post(
   isochroneController.generateRoutes,
   isochroneController.generateIsochrones,
   centroidController.getCentroid,
+  yelpController.getNearby,
   googleMapsController.genGoogleMapsURL,
   yelpController.getRadius,
   (req, res) => {
-    console.log('RES LOCALS', res.locals);
+    console.log('res.locals @ end of middleware chain', res.locals);
     res.status(200).json(res.locals);
   }
 );

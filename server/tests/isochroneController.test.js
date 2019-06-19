@@ -30,6 +30,17 @@ describe('isochroneController', () => {
         Math.round(new Date(req.body.departureTime).valueOf() / 1000)
       );
     });
+
+    describe('isochroneController.generateRoutes', () => {
+    it('res.locals.fairTime should be a real number greater than 0', async () => {
+      res.locals.departureTimeUNIX = Math.round(new Date(req.body.departureTime).valueOf() / 1000);
+      await isochroneController.generateRoutes(req, res, next);
+      //console.log('GENROUTES res.locals: ', res.locals);
+      // await console.log('GENROUTES res.locals: ', res.locals);
+      expect(res.locals.fairTime).resolves.toBe('number');
+    });
+  });
+
   });
 
   describe('isochroneController.generateRoutes', () => {

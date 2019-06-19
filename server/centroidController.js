@@ -44,7 +44,7 @@ const centroidController = {
             &departure_time=${res.locals.departureTimeUNIX}
             &key=${process.env.GOOGLE_MAPS_API_KEY}`,
               (err, res, body) => {
-                console.log('💥 HAVE WE PASSED THE API LIMIT?', body);
+                //console.log('💥 HAVE WE PASSED THE API LIMIT?', body);
                 if (err) console.log(err);
                 resolve(
                   JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
