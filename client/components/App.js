@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Maps from '../components/Maps';
-import Form from '../components/Form';
-import List from '../components/List';
+import axios from 'axios';
+import Maps from './Maps';
+import Form from './Form';
+import List from './List';
+import GoogleAuth from './GoogleAuth';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -9,6 +11,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userCurrentCoords: null,
       radioName: 'p30min',
       radioVal: 30 * 60,
       showForm: true,
@@ -23,7 +26,33 @@ class App extends Component {
     this.displayYelpMatches = this.displayYelpMatches.bind(this);
     this.findMatches = this.findMatches.bind(this);
     this.selectYelpCategoryMatch = this.selectYelpCategoryMatch.bind(this);
+    this.getUserCurrentCoords = this.getUserCurrentCoords.bind(this);
+    this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
+    this.onGoogleFailure = this.onGoogleFailure.bind(this);
+    this.signOut = this.signOut.bind(this);
   }
+
+  onGoogleSuccess(googleUser) {
+    console.log('Signing into Google!');
+    const profile = googleUser.getBasicProfile();
+    console.log(`Welcome, ${profile.getName()}`);
+    const token = googleUser.getAuthResponse().id_token;
+    axios.post('http://localhost:3000/api/auth/google', {
+      token,
+    });
+  }
+
+  onGoogleFailure(error) {
+    cconsle.log(error);
+  }
+
+  signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function() {
+      console.log('User signed out.');
+    });
+  }
+
   onChange(e) {
     this.setState({
       [e.target.id]: e.target.value,
@@ -55,6 +84,24 @@ class App extends Component {
       yelpCategoryMatch: e.target.innerText,
     });
   }
+
+  getUserCurrentCoords() {
+    event.preventDefault();
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+    const success = pos => {
+      this.setState({
+        userCurrentCoords: pos.coords,
+      });
+    };
+    const error = err => {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+    navigator.geolocation.getCurrentPosition(success, error, options);
+  }
   onClick(e) {
     console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
@@ -64,7 +111,7 @@ class App extends Component {
     const data = {
       points: [this.state.locInput0a, this.state.locInput0b],
       departureTime: departureTime,
-      yelpCategory: this.state.yelpCategory
+      yelpCategory: this.state.yelpCategory,
     };
     this.setState({ loading: true });
     fetch('http://localhost:3000/buildroute', {
@@ -123,11 +170,16 @@ class App extends Component {
             handleYelpCategoryInput={this.handleYelpCategoryInput}
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
-            
+            getUserCurrentCoords={this.getUserCurrentCoords}
           />
         )}
         <Maps result={this.state.result} />
         <List result={this.state.result} />
+        <GoogleAuth
+          signOut={this.signOut}
+          onGoogleSuccess={this.onGoogleSuccess}
+          onGoogleFailure={this.onGoogleFailure}
+        />
       </div>
     );
   }
