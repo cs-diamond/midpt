@@ -57,11 +57,16 @@ const yelpController = {
     next();
   },
 
+ 
   getNearby: (req, res, next) => {
+       //checking req.body for yelp category
+       //console.log('Will',req.body.yelpCategory);
     const searchRequest = {
       latitude: res.locals.midpt.lat,
       longitude: res.locals.midpt.lng,
-      categories: 'coffee',
+      categories: req.body.yelpCategory,
+      radius: res.locals.radius,
+      limit: 50,
     };
 
     const client = yelp.client(apiKey);
@@ -83,27 +88,43 @@ const yelpController = {
         }
         res.locals.yelpData = yelpData;
 
-        //next we filter out the restaurants within our isochrone intersection in yelpData
-        //console.log(yelpData);
-        let values = [];
-        for (let i = 0; i < yelpData.length;i++){
-          values.push([yelpData[i].coordinates.lat,yelpData[i].coordinates.lng])
-        }
-        //console.log('values',values);
-        //console.log(res.locals.coords);
-        values = turf.points(values).features.geometry;
-        console.log('turf values',values);
-        //res.locals.coords = turf.polygon(res.locals.coords[0]);
-        //let ptsWithin = turf.pointsWithinPolygon(values,res.locals.coords[0]);
-        console.log('res.locals.coords.length', res.locals.coords.length);
-        //console.log('ptsWithin',ptsWithin.features[0].geometry);
-        /*
-        let featuresArr = [];
-        ptsWithin.features.forEach(el=>{
-          featuresArr.push({lat:el.geometry.coordinates[0],lng:el.geometry.coordinates[1]});
+        let yelpPoints = yelpData.map(el => {
+          return [el.coordinates.lat, el.coordinates.lng];
         });
-        console.log(featuresArr);
-        */
+  
+
+        yelpPoints = turf.points(yelpPoints);
+
+        let coords = res.locals.coords;
+
+        if (res.locals.coordsGeoType === 'Polygon') {
+          coords = turf.polygon(res.locals.coords);
+        } else {
+          coords = turf.polygon(res.locals.coords[0]);
+        }
+
+        let pointsWithin = turf.pointsWithinPolygon(yelpPoints, coords);
+
+        res.locals.pointsWithin = pointsWithin;
+
+        
+
+        pointsWithin.features.forEach((el) => {
+          console.log('📍 pointsWithin latlong: ' + el.geometry.coordinates[0] + ', ' + el.geometry.coordinates[1]);
+        });
+        const filteredYelpData = [];
+        yelpData.forEach(el => {
+          console.log('📍 yelpData latlong: ' + el.coordinates.lat + ', ' + el.coordinates.lng);
+          pointsWithin.features.forEach(le => {
+            if ((el.coordinates.lat === le.geometry.coordinates[0]) && (el.coordinates.lng === le.geometry.coordinates[1])) {
+              filteredYelpData.push(el);
+            }
+          });
+        });
+
+        console.log('filteredYelpData', filteredYelpData)
+        res.locals.filteredYelpData = filteredYelpData;
+
         return next();
       })
       .catch(e => {
