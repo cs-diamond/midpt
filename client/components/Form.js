@@ -46,6 +46,8 @@ const Form = props => {
     handleYelpCategoryInput,
     yelpCategoryMatches,
     selectYelpCategoryMatch,
+    getUserCurrentCoords,
+    createSharableMap,
   } = props;
   const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
 
@@ -77,6 +79,9 @@ const Form = props => {
   return (
     <form id="form" className="formContainer">
       <div className="formFlexGroup">
+        <button className="locationPointer" onClick={getUserCurrentCoords}>
+          <Icon name="location-pointer" color={colors.blue} width={18} />
+        </button>
         <button
           onClick={addMoreAddressInputs}
           className="button moreAddressesButton"
@@ -150,6 +155,7 @@ const Form = props => {
         </div>
       </div>
       {renderButton()}
+      {/* <button onClick={createSharableMap}>Create sharable link</button> */}
     </form>
   );
 };

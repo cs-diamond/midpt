@@ -144,6 +144,7 @@ isochroneController.generateIsochrones = (req, res, next) => {
       );
     } else {
       console.log('its a multi');
+      //res.locals.coords = coords;
       for (let i = 0; i < coords.length; i++) {
         res.locals.isoIntersectionPoints.push(
           coords[i][0].map(el => {
