@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import Maps from './Maps';
 import Form from './Form';
 import List from './List';
 import GoogleAuth from './GoogleAuth';
+import Share from './Share';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -33,6 +35,7 @@ class App extends Component {
     this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
     this.onGoogleFailure = this.onGoogleFailure.bind(this);
     this.initGoogleAuth = this.initGoogleAuth.bind(this);
+    this.createSharableMap = this.createSharableMap.bind(this);
     this.signOut = this.signOut.bind(this);
   }
 
@@ -147,6 +150,8 @@ class App extends Component {
     };
     navigator.geolocation.getCurrentPosition(success, error, options);
   }
+
+  createSharableMap() {}
   onClick(e) {
     console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
@@ -208,33 +213,37 @@ class App extends Component {
       signedInUserProfilePic,
     } = this.state;
     return (
-      <div className="App">
-        <GoogleAuth
-          signOut={this.signOut}
-          signedInUserEmail={signedInUserEmail}
-          signedInUserFirstName={signedInUserFirstName}
-          signedInUserProfilePic={signedInUserProfilePic}
-          initGoogleAuth={this.initGoogleAuth}
-        />
-        <h1>midpt</h1>
-        {showForm && (
-          <Form
-            onChange={this.onChange}
-            onClick={this.onClick}
-            radioVal={this.state.radioName}
-            onRadioChange={this.onRadioChange}
-            placeholder={this.state.placeholder}
-            loading={this.state.loading}
-            yelpCategory={yelpCategory}
-            handleYelpCategoryInput={this.handleYelpCategoryInput}
-            yelpCategoryMatches={yelpCategoryMatches}
-            selectYelpCategoryMatch={this.selectYelpCategoryMatch}
-            getUserCurrentCoords={this.getUserCurrentCoords}
+      <Router>
+        <div className="App">
+          <GoogleAuth
+            signOut={this.signOut}
+            signedInUserEmail={signedInUserEmail}
+            signedInUserFirstName={signedInUserFirstName}
+            signedInUserProfilePic={signedInUserProfilePic}
+            initGoogleAuth={this.initGoogleAuth}
           />
-        )}
-        <Maps result={this.state.result} />
-        <List result={this.state.result} />
-      </div>
+          <h1>midpt</h1>
+          {showForm && (
+            <Form
+              onChange={this.onChange}
+              onClick={this.onClick}
+              onClick={this.createSharableMap}
+              radioVal={this.state.radioName}
+              onRadioChange={this.onRadioChange}
+              placeholder={this.state.placeholder}
+              loading={this.state.loading}
+              yelpCategory={yelpCategory}
+              handleYelpCategoryInput={this.handleYelpCategoryInput}
+              yelpCategoryMatches={yelpCategoryMatches}
+              selectYelpCategoryMatch={this.selectYelpCategoryMatch}
+              getUserCurrentCoords={this.getUserCurrentCoords}
+            />
+          )}
+          <Maps result={this.state.result} />
+          <List result={this.state.result} />
+        </div>
+        <Route path="/share/:id" component={Share} />
+      </Router>
     );
   }
 }
