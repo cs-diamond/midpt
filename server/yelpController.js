@@ -57,11 +57,14 @@ const yelpController = {
     next();
   },
 
+ 
   getNearby: (req, res, next) => {
+       //checking req.body for yelp category
+       //console.log('Will',req.body.yelpCategory);
     const searchRequest = {
       latitude: res.locals.midpt.lat,
       longitude: res.locals.midpt.lng,
-      categories: 'coffee',
+      categories: req.body.yelpCategory,
       radius: res.locals.radius,
       limit: 50,
     };
@@ -86,14 +89,9 @@ const yelpController = {
         res.locals.yelpData = yelpData;
 
         let yelpPoints = yelpData.map(el => {
-          // console.log('el.coordinates', el.coordinates);
-          // console.log('el.coordinates.lat', el.coordinates.lat);
-          // console.log('el.coordinates.lng', el.coordinates.lng);
           return [el.coordinates.lat, el.coordinates.lng];
         });
-        // console.log('yelpPoints', yelpPoints);
-
-        // console.log('COORDSES', res.locals.coords);
+  
 
         yelpPoints = turf.points(yelpPoints);
 
@@ -105,12 +103,11 @@ const yelpController = {
           coords = turf.polygon(res.locals.coords[0]);
         }
 
-        console.log('yelpPoints', yelpPoints);
-        console.log('coords', coords);
-
         let pointsWithin = turf.pointsWithinPolygon(yelpPoints, coords);
 
         res.locals.pointsWithin = pointsWithin;
+
+        
 
         pointsWithin.features.forEach((el) => {
           console.log('📍 pointsWithin latlong: ' + el.geometry.coordinates[0] + ', ' + el.geometry.coordinates[1]);

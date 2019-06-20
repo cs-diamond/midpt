@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Maps from './Maps';
 import Form from './Form';
+import List from './List';
 import GoogleAuth from './GoogleAuth';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
@@ -110,6 +111,7 @@ class App extends Component {
     const data = {
       points: [this.state.locInput0a, this.state.locInput0b],
       departureTime: departureTime,
+      yelpCategory: this.state.yelpCategory,
     };
     this.setState({ loading: true });
     fetch('http://localhost:3000/buildroute', {
@@ -172,6 +174,7 @@ class App extends Component {
           />
         )}
         <Maps result={this.state.result} />
+        <List result={this.state.result} />
         <GoogleAuth
           signOut={this.signOut}
           onGoogleSuccess={this.onGoogleSuccess}
