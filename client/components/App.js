@@ -21,7 +21,7 @@ class App extends Component {
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
       midptInfo: {},
-      submitButton: true
+      submitButton: true,
       signedInUserEmail: null,
       signedInUserFirstName: null,
       signedInUserProfilePic: null,
@@ -37,36 +37,33 @@ class App extends Component {
     this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
     this.onGoogleFailure = this.onGoogleFailure.bind(this);
     this.initGoogleAuth = this.initGoogleAuth.bind(this);
-    this.createSharableMap = this.createSharableMap.bind(this);
     this.signOut = this.signOut.bind(this);
     this.onChoose = this.onChoose.bind(this);
     this.checkForm = this.checkForm.bind(this);
   }
 
-  checkForm(){
+  checkForm() {
     let box1 = document.getElementById('locInput0a').value;
     let box2 = document.getElementById('locInput0b').value;
-    if (box1.toUpperCase()==box2.toUpperCase() || box1.length==0 || box2.length==0){
-      console.log('if statement')
+    if (
+      box1.toUpperCase() == box2.toUpperCase() ||
+      box1.length == 0 ||
+      box2.length == 0
+    ) {
+      console.log('if statement');
       document.getElementById('formSubmitButton').classList.add('buttonNo');
-      this.setState(
-        {submitButton: false}
-      )
-    }
-    else {
+      this.setState({ submitButton: false });
+    } else {
       console.log('else statement');
       document.getElementById('formSubmitButton').classList.remove('buttonNo');
-      this.setState(
-        {submitButton: true}
-      )
-  };
-  console.log('checkform gets through');
-}
+      this.setState({ submitButton: true });
+    }
+    console.log('checkform gets through');
+  }
 
-
-componentDidMount(){
-  this.checkForm();
-}
+  componentDidMount() {
+    this.checkForm();
+  }
   initGoogleAuth() {
     window.gapi.load('auth2', () => {
       window.gapi.auth2
@@ -186,49 +183,47 @@ componentDidMount(){
   }
 
   onClick(e) {
-    if (this.state.submitButton){
-
-    
-    console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
-    console.log('Leaving in +' + this.state.radioVal + ' seconds');
-    let departureTime = new Date(Date.now() + this.state.radioVal * 1000);
-    departureTime = departureTime.toISOString();
-    console.log('(' + departureTime + ')');
-    const data = {
-      points: [this.state.locInput0a, this.state.locInput0b],
-      departureTime: departureTime,
-      yelpCategory: this.state.yelpCategory,
-    };
-    this.setState({ loading: true });
-    fetch('http://localhost:3000/api/buildroute', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      .then(response => {
-        console.log('raw server response', response);
-        return response.json();
+    if (this.state.submitButton) {
+      console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
+      console.log('Leaving in +' + this.state.radioVal + ' seconds');
+      let departureTime = new Date(Date.now() + this.state.radioVal * 1000);
+      departureTime = departureTime.toISOString();
+      console.log('(' + departureTime + ')');
+      const data = {
+        points: [this.state.locInput0a, this.state.locInput0b],
+        departureTime: departureTime,
+        yelpCategory: this.state.yelpCategory,
+      };
+      this.setState({ loading: true });
+      fetch('http://localhost:3000/api/buildroute', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       })
-      .then(data => {
-        this.setState({ loading: false });
-        console.log('data', data);
-        this.setState({
-          result: {
-            point1: data.points[0],
-            point2: data.points[1],
-            midpt: data.midpt,
-            aToMidptURL: data.directionURLs[0],
-            bToMidptURL: data.directionURLs[1],
-            address1: data.addresses[0],
-            address2: data.addresses[1],
-            isochrones: data.isochrones,
-            yelps: data.filteredYelpData,
-          },
-          showForm: false,
+        .then(response => {
+          console.log('raw server response', response);
+          return response.json();
+        })
+        .then(data => {
+          this.setState({ loading: false });
+          console.log('data', data);
+          this.setState({
+            result: {
+              point1: data.points[0],
+              point2: data.points[1],
+              midpt: data.midpt,
+              aToMidptURL: data.directionURLs[0],
+              bToMidptURL: data.directionURLs[1],
+              address1: data.addresses[0],
+              address2: data.addresses[1],
+              isochrones: data.isochrones,
+              yelps: data.filteredYelpData,
+            },
+            showForm: false,
+          });
         });
-      });
     }
   }
   onRadioChange(e) {
@@ -260,8 +255,9 @@ componentDidMount(){
         />
         <h1>midpt</h1>
         {showForm && (
-          <Form checkForm = {this.checkForm}
-            onChange={this.onChange} 
+          <Form
+            checkForm={this.checkForm}
+            onChange={this.onChange}
             onClick={this.onClick}
             radioVal={this.state.radioName}
             onRadioChange={this.onRadioChange}
