@@ -346,13 +346,13 @@ img {
 .list li {
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
   text-align: left;
   width: 100%;
   height: 113px;
   border-bottom: 0.5px solid #979797;
   align-items: center;
   align-content: center;
+
 
 }
  .list {
@@ -378,4 +378,33 @@ h3 {
   margin: 40px auto;
   width: 90%;
   max-width: 570px;
+}
+
+.list li div {
+  flex-grow: 2;
+
+}
+
+.list li figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  margin-right: 25px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #fe5c47;
+  color: white;
+  font-size: 35px;
+}
+
+input[type="button"].buttonNo {
+  cursor: not-allowed;
+  color: rgba(0,0,0,0.1);
+  &:hover {
+    background: #f6f6f6;
+    color: rgba(0,0,0,.1);
+    transition: all ease-in-out 100ms;
+  }
 }

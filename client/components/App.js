@@ -15,7 +15,8 @@ class App extends Component {
       yelpCategory: '',
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
-      midptInfo: {}
+      midptInfo: {},
+      submitButton: true
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -25,11 +26,38 @@ class App extends Component {
     this.findMatches = this.findMatches.bind(this);
     this.selectYelpCategoryMatch = this.selectYelpCategoryMatch.bind(this);
     this.onChoose = this.onChoose.bind(this);
+    this.checkForm = this.checkForm.bind(this);
   }
+
+  checkForm(){
+    let box1 = document.getElementById('locInput0a').value;
+    let box2 = document.getElementById('locInput0b').value;
+    if (box1.toUpperCase()==box2.toUpperCase() || box1.length==0 || box2.length==0){
+      console.log('if statement')
+      document.getElementById('formSubmitButton').classList.add('buttonNo');
+      this.setState(
+        {submitButton: false}
+      )
+    }
+    else {
+      console.log('else statement');
+      document.getElementById('formSubmitButton').classList.remove('buttonNo');
+      this.setState(
+        {submitButton: true}
+      )
+  };
+  console.log('checkform gets through');
+}
+
+
+componentDidMount(){
+  this.checkForm();
+}
   onChange(e) {
     this.setState({
       [e.target.id]: e.target.value,
     });
+    this.checkForm();
   }
 
   findMatches(categoryToMatch, categories) {
@@ -64,7 +92,13 @@ class App extends Component {
       {midptInfo: el}
     );
   }
+
+
+
   onClick(e) {
+    if (this.state.submitButton){
+
+    
     console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
     let departureTime = new Date(Date.now() + this.state.radioVal * 1000);
@@ -105,6 +139,7 @@ class App extends Component {
           showForm: false,
         });
       });
+    }
   }
   onRadioChange(e) {
     this.setState({
@@ -121,8 +156,8 @@ class App extends Component {
       <div className="App">
         <h1>midpt</h1>
         {showForm && (
-          <Form
-            onChange={this.onChange}
+          <Form checkForm = {this.checkForm}
+            onChange={this.onChange} 
             onClick={this.onClick}
             radioVal={this.state.radioName}
             onRadioChange={this.onRadioChange}

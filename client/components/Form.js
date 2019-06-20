@@ -60,6 +60,7 @@ const Form = props => {
     ) : (
       <input
         className="button findMidptButton"
+        id = 'formSubmitButton'
         type="button"
         value="Find Midpoint →"
         onClick={onClick}
@@ -76,7 +77,7 @@ const Form = props => {
 
   return (
     <form id="form" className="formContainer">
-      <div className="formFlexGroup">
+      <div onChange = {props.checkForm} className="formFlexGroup">
         <button
           onClick={addMoreAddressInputs}
           className="button moreAddressesButton"
@@ -138,7 +139,7 @@ const Form = props => {
                 <input
                   type="text"
                   id="yelpCategory"
-                  placeholder="☕️ Cafes, 🍽 Restaurants, 🍸 Bars"
+                  placeholder="Enter a category...."
                   onChange={e => handleYelpCategoryInput(e, yelpCategory)}
                 />
                 <ul className="yelpCategoryMatches">
