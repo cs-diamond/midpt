@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
+const axios = require('axios');
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(CLIENT_ID);
 require('dotenv').config();
 app.use(bodyParser.urlencoded({ extended: false }));
 const isochroneController = require('./isochroneController');
@@ -9,6 +12,9 @@ const googleMapsController = require('./googleMapsController');
 const centroidController = require('./centroidController');
 const yelpController = require('./yelpController');
 const cors = require('cors');
+
+const client = new OAuth2Client(CLIENT_ID);
+const authController = require('./authController')(client, axios);
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -41,6 +47,10 @@ app.post(
     res.status(200).json(res.locals);
   }
 );
+
+app.get('/auth/google', authController.googleSignIn, (req, res) => {
+  return res.status(200).send('success');
+});
 
 app.get('/api/', (req, res) => {
   //do stuff

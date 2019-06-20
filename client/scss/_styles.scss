@@ -203,6 +203,19 @@ input:focus {
   font-size: 1.17em;
 }
 
+.locationPointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 40px 0px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+}
+
 input[type="button"] {
   -webkit-appearance: none;
   font-size: 1.17em;
