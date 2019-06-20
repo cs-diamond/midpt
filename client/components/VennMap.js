@@ -52,7 +52,7 @@ const VennMap = (props) => {
   }, 1000);
   return (
     <div>
-    <div className="mapContainer">
+    <div>
       <figure key="VM" className="map" id="vennMap"></figure>
     </div>
     </div>

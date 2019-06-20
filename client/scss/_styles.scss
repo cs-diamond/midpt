@@ -356,7 +356,7 @@ img {
 
 }
  .list {
-   width: 90vw;
+   width: calc(100%-40px);
    background-color: #f6f6f6;
    padding: 0 20px 20px;
  }
@@ -369,4 +369,13 @@ img {
  }
 h3 {
   margin: 2px auto;
+}
+
+.listmap {
+  background: rgba(220, 220, 220, 0.8);
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 40px auto;
+  width: 90%;
+  max-width: 570px;
 }

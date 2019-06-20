@@ -15,6 +15,7 @@ class App extends Component {
       yelpCategory: '',
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
+      midptInfo: {}
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -23,6 +24,7 @@ class App extends Component {
     this.displayYelpMatches = this.displayYelpMatches.bind(this);
     this.findMatches = this.findMatches.bind(this);
     this.selectYelpCategoryMatch = this.selectYelpCategoryMatch.bind(this);
+    this.onChoose = this.onChoose.bind(this);
   }
   onChange(e) {
     this.setState({
@@ -54,6 +56,13 @@ class App extends Component {
     this.setState({
       yelpCategoryMatch: e.target.innerText,
     });
+  }
+
+  onChoose(el){
+    window.scrollTo(0,0);
+    this.setState(
+      {midptInfo: el}
+    );
   }
   onClick(e) {
     console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
@@ -126,8 +135,8 @@ class App extends Component {
             
           />
         )}
-        <Maps result={this.state.result} />
-        <List result={this.state.result} />
+        <Maps result={this.state.result} onChoose = {this.onChoose} midptInfo = {this.state.midptInfo}/>
+        
       </div>
     );
   }
