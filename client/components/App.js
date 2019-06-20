@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import Maps from './Maps';
 import Form from './Form';
 import List from './List';
 import GoogleAuth from './GoogleAuth';
+import Share from './Share';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -19,6 +21,9 @@ class App extends Component {
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
       midptInfo: {},
+      signedInUserEmail: null,
+      signedInUserFirstName: null,
+      signedInUserProfilePic: null,
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -30,8 +35,31 @@ class App extends Component {
     this.getUserCurrentCoords = this.getUserCurrentCoords.bind(this);
     this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
     this.onGoogleFailure = this.onGoogleFailure.bind(this);
+    this.initGoogleAuth = this.initGoogleAuth.bind(this);
+    this.createSharableMap = this.createSharableMap.bind(this);
     this.signOut = this.signOut.bind(this);
     this.onChoose = this.onChoose.bind(this);
+  }
+
+  initGoogleAuth() {
+    window.gapi.load('auth2', () => {
+      window.gapi.auth2
+        .init({
+          client_id:
+            '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com',
+        })
+        .then(() => {
+          window.gapi.signin2.render('google-signin', {
+            scope: 'profile email',
+            width: 120,
+            height: 30,
+            longtitle: false,
+            theme: 'dark',
+            onsuccess: this.onGoogleSuccess,
+            onfailure: this.onGoogleFailure,
+          });
+        });
+    });
   }
 
   onGoogleSuccess(googleUser) {
@@ -39,9 +67,21 @@ class App extends Component {
     const profile = googleUser.getBasicProfile();
     console.log(`Welcome, ${profile.getName()}`);
     const token = googleUser.getAuthResponse().id_token;
-    axios.post('http://localhost:3000/api/auth/google', {
-      token,
-    });
+    axios
+      .post('http://localhost:3000/api/auth/google', {
+        token,
+      })
+      .then(({ data }) => {
+        this.setState({
+          signedInUserEmail: profile.getEmail(),
+          signedInUserFirstName: profile.getGivenName(),
+          signedInUserProfilePic: profile.getImageUrl(),
+        });
+        console.log(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
   onGoogleFailure(error) {
@@ -50,7 +90,15 @@ class App extends Component {
 
   signOut() {
     const auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function() {
+    auth2.signOut().then(() => {
+      this.setState(
+        {
+          signedInUserEmail: null,
+        },
+        () => {
+          this.initGoogleAuth();
+        }
+      );
       console.log('User signed out.');
     });
   }
@@ -109,6 +157,8 @@ class App extends Component {
     };
     navigator.geolocation.getCurrentPosition(success, error, options);
   }
+
+  createSharableMap() {}
   onClick(e) {
     console.log(this.state.locInput0a + ' 📍 ' + this.state.locInput0b);
     console.log('Leaving in +' + this.state.radioVal + ' seconds');
@@ -161,23 +211,22 @@ class App extends Component {
     this.setState({ shouldUpdateMap: false });
   }
   render() {
-    const { showForm, yelpCategory, yelpCategoryMatches } = this.state;
+    const {
+      showForm,
+      yelpCategory,
+      yelpCategoryMatches,
+      signedInUserEmail,
+      signedInUserFirstName,
+      signedInUserProfilePic,
+    } = this.state;
     return (
-      <div className="App">
-        <h1>midpt</h1>
-        {showForm && (
-          <Form
-            onChange={this.onChange}
-            onClick={this.onClick}
-            radioVal={this.state.radioName}
-            onRadioChange={this.onRadioChange}
-            placeholder={this.state.placeholder}
-            loading={this.state.loading}
-            yelpCategory={yelpCategory}
-            handleYelpCategoryInput={this.handleYelpCategoryInput}
-            yelpCategoryMatches={yelpCategoryMatches}
-            selectYelpCategoryMatch={this.selectYelpCategoryMatch}
-            getUserCurrentCoords={this.getUserCurrentCoords}
+        <div className="App">
+          <GoogleAuth
+            signOut={this.signOut}
+            signedInUserEmail={signedInUserEmail}
+            signedInUserFirstName={signedInUserFirstName}
+            signedInUserProfilePic={signedInUserProfilePic}
+            initGoogleAuth={this.initGoogleAuth}
           />
         )}
         <Maps
@@ -185,12 +234,25 @@ class App extends Component {
           onChoose={this.onChoose}
           midptInfo={this.state.midptInfo}
         />
-        <GoogleAuth
-          signOut={this.signOut}
-          onGoogleSuccess={this.onGoogleSuccess}
-          onGoogleFailure={this.onGoogleFailure}
-        />
       </div>
+          <h1>midpt</h1>
+          {showForm && (
+            <Form
+              onChange={this.onChange}
+              onClick={this.onClick}
+              onClick={this.createSharableMap}
+              radioVal={this.state.radioName}
+              onRadioChange={this.onRadioChange}
+              placeholder={this.state.placeholder}
+              loading={this.state.loading}
+              yelpCategory={yelpCategory}
+              handleYelpCategoryInput={this.handleYelpCategoryInput}
+              yelpCategoryMatches={yelpCategoryMatches}
+              selectYelpCategoryMatch={this.selectYelpCategoryMatch}
+              getUserCurrentCoords={this.getUserCurrentCoords}
+            />
+          )}
+        </div>
     );
   }
 }

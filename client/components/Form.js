@@ -47,6 +47,7 @@ const Form = props => {
     yelpCategoryMatches,
     selectYelpCategoryMatch,
     getUserCurrentCoords,
+    createSharableMap,
   } = props;
   const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
 
@@ -154,6 +155,7 @@ const Form = props => {
         </div>
       </div>
       {renderButton()}
+      {/* <button onClick={createSharableMap}>Create sharable link</button> */}
     </form>
   );
 };
