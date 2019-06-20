@@ -13,6 +13,9 @@ const ListItem = (props) => {
         }
       const formData = (
                         <li>
+                        <figure>
+                            {props.rank}
+                        </figure> 
                         <div>
                         <h3>{props.el.name}</h3>  
                         <p className = 'address'>{props.el.location.address1}, {props.el.location.city}</p>

@@ -61,6 +61,7 @@ const Form = props => {
     ) : (
       <input
         className="button findMidptButton"
+        id="formSubmitButton"
         type="button"
         value="Find Midpoint →"
         onClick={onClick}
@@ -109,7 +110,7 @@ const Form = props => {
               value={30 * 60}
               onClick={onRadioChange}
               defaultChecked="true"
-            />
+            /> 
             <label htmlFor="p30min">{'In 30 mins'}</label>
             <input
               type="radio"
@@ -142,7 +143,7 @@ const Form = props => {
                 <input
                   type="text"
                   id="yelpCategory"
-                  placeholder="☕️ Cafes, 🍽 Restaurants, 🍸 Bars"
+                  placeholder="Enter a category...."
                   onChange={e => handleYelpCategoryInput(e, yelpCategory)}
                 />
                 <ul className="yelpCategoryMatches">
@@ -154,7 +155,6 @@ const Form = props => {
         </div>
       </div>
       {renderButton()}
-      {/* <button onClick={createSharableMap}>Create sharable link</button> */}
     </form>
   );
 };
