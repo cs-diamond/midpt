@@ -61,7 +61,7 @@ const Form = props => {
     ) : (
       <input
         className="button findMidptButton"
-        id = 'formSubmitButton'
+        id="formSubmitButton"
         type="button"
         value="Find Midpoint →"
         onClick={onClick}
@@ -78,85 +78,85 @@ const Form = props => {
 
   return (
     <form id="form" className="formContainer">
-      <div onChange = {props.checkForm} className="formFlexGroup">
-      <div className="formFlexGroup">
-        <button className="locationPointer" onClick={getUserCurrentCoords}>
-          <Icon name="location-pointer" color={colors.blue} width={18} />
-        </button>
-        <button
-          onClick={addMoreAddressInputs}
-          className="button moreAddressesButton"
-        >
-          <Icon name="plus" color={colors.blue} />
-        </button>
-        <Inputs
-          numLocationInputGroups={numLocationInputGroups}
-          onChange={onChange}
-        />
-        <div className="locButtons">
-          <div className="timeRadio">
-            <span className="inputLabel">Leaving</span>
-            <input
-              type="radio"
-              name="leaving"
-              id="now"
-              value={0}
-              onClick={onRadioChange}
-            />
-            <label htmlFor="now">Now</label>
-            <input
-              type="radio"
-              name="leaving"
-              id="p30min"
-              value={30 * 60}
-              onClick={onRadioChange}
-              defaultChecked="true"
-            />
-            <label htmlFor="p30min">{'In 30 mins'}</label>
-            <input
-              type="radio"
-              name="leaving"
-              id="p1hr"
-              value={60 * 60}
-              onClick={onRadioChange}
-            />
-            <label htmlFor="p1hr">{'In 1 hour'}</label>
-            <input
-              type="radio"
-              name="leaving"
-              id="other"
-              value="other"
-              onClick={onRadioChange}
-            />
-            <label htmlFor="other">
+      <div onChange={props.checkForm} className="formFlexGroup">
+        <div className="formFlexGroup">
+          <button className="locationPointer" onClick={getUserCurrentCoords}>
+            <Icon name="location-pointer" color={colors.blue} width={18} />
+          </button>
+          <button
+            onClick={addMoreAddressInputs}
+            className="button moreAddressesButton"
+          >
+            <Icon name="plus" color={colors.blue} />
+          </button>
+          <Inputs
+            numLocationInputGroups={numLocationInputGroups}
+            onChange={onChange}
+          />
+          <div className="locButtons">
+            <div className="timeRadio">
+              <span className="inputLabel">Leaving</span>
               <input
-                type="text"
-                id="otherText"
-                placeholder="Other..."
-                onChange={() => onOther(radioVal, onRadioChange)}
-                onClick={() => onOther(radioVal, onRadioChange)}
-                pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"
+                type="radio"
+                name="leaving"
+                id="now"
+                value={0}
+                onClick={onRadioChange}
               />
-            </label>
-            <span className="inputLabel yelpCategory">Meet at</span>
-            <label className="yelpCategory" htmlFor="yelp-category">
-              <div className="yelpCategory">
+              <label htmlFor="now">Now</label>
+              <input
+                type="radio"
+                name="leaving"
+                id="p30min"
+                value={30 * 60}
+                onClick={onRadioChange}
+                defaultChecked="true"
+              />
+              <label htmlFor="p30min">{'In 30 mins'}</label>
+              <input
+                type="radio"
+                name="leaving"
+                id="p1hr"
+                value={60 * 60}
+                onClick={onRadioChange}
+              />
+              <label htmlFor="p1hr">{'In 1 hour'}</label>
+              <input
+                type="radio"
+                name="leaving"
+                id="other"
+                value="other"
+                onClick={onRadioChange}
+              />
+              <label htmlFor="other">
                 <input
                   type="text"
-                  id="yelpCategory"
-                  placeholder="Enter a category...."
-                  onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+                  id="otherText"
+                  placeholder="Other..."
+                  onChange={() => onOther(radioVal, onRadioChange)}
+                  onClick={() => onOther(radioVal, onRadioChange)}
+                  pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"
                 />
-                <ul className="yelpCategoryMatches">
-                  {renderYelpCategoryMatches()}
-                </ul>
-              </div>
-            </label>
+              </label>
+              <span className="inputLabel yelpCategory">Meet at</span>
+              <label className="yelpCategory" htmlFor="yelp-category">
+                <div className="yelpCategory">
+                  <input
+                    type="text"
+                    id="yelpCategory"
+                    placeholder="Enter a category...."
+                    onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+                  />
+                  <ul className="yelpCategoryMatches">
+                    {renderYelpCategoryMatches()}
+                  </ul>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
       </div>
       {renderButton()}
-      {/* <button onClick={createSharableMap}>Create sharable link</button> */}
     </form>
   );
 };
