@@ -171,7 +171,7 @@ class App extends Component {
       yelpCategory: this.state.yelpCategory,
     };
     this.setState({ loading: true });
-    fetch('http://localhost:3000/buildroute', {
+    fetch('http://localhost:3000/api/buildroute', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -220,13 +220,28 @@ class App extends Component {
       signedInUserProfilePic,
     } = this.state;
     return (
-        <div className="App">
-          <GoogleAuth
-            signOut={this.signOut}
-            signedInUserEmail={signedInUserEmail}
-            signedInUserFirstName={signedInUserFirstName}
-            signedInUserProfilePic={signedInUserProfilePic}
-            initGoogleAuth={this.initGoogleAuth}
+      <div className="App">
+        <GoogleAuth
+          signOut={this.signOut}
+          signedInUserEmail={signedInUserEmail}
+          signedInUserFirstName={signedInUserFirstName}
+          signedInUserProfilePic={signedInUserProfilePic}
+          initGoogleAuth={this.initGoogleAuth}
+        />
+        <h1>midpt</h1>
+        {showForm && (
+          <Form
+            onChange={this.onChange}
+            onClick={this.onClick}
+            radioVal={this.state.radioName}
+            onRadioChange={this.onRadioChange}
+            placeholder={this.state.placeholder}
+            loading={this.state.loading}
+            yelpCategory={yelpCategory}
+            handleYelpCategoryInput={this.handleYelpCategoryInput}
+            yelpCategoryMatches={yelpCategoryMatches}
+            selectYelpCategoryMatch={this.selectYelpCategoryMatch}
+            getUserCurrentCoords={this.getUserCurrentCoords}
           />
         )}
         <Maps
@@ -235,24 +250,6 @@ class App extends Component {
           midptInfo={this.state.midptInfo}
         />
       </div>
-          <h1>midpt</h1>
-          {showForm && (
-            <Form
-              onChange={this.onChange}
-              onClick={this.onClick}
-              onClick={this.createSharableMap}
-              radioVal={this.state.radioName}
-              onRadioChange={this.onRadioChange}
-              placeholder={this.state.placeholder}
-              loading={this.state.loading}
-              yelpCategory={yelpCategory}
-              handleYelpCategoryInput={this.handleYelpCategoryInput}
-              yelpCategoryMatches={yelpCategoryMatches}
-              selectYelpCategoryMatch={this.selectYelpCategoryMatch}
-              getUserCurrentCoords={this.getUserCurrentCoords}
-            />
-          )}
-        </div>
     );
   }
 }
