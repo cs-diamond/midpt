@@ -67,6 +67,8 @@ const yelpController = {
       categories: req.body.yelpCategory,
       radius: res.locals.radius,
       limit: 50,
+      sort_by: 'rating',
+      open_now: true
     };
 
     const client = yelp.client(apiKey);

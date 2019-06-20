@@ -20,6 +20,7 @@ class App extends Component {
       yelpCategory: '',
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
+      midptInfo: {},
       signedInUserEmail: null,
       signedInUserFirstName: null,
       signedInUserProfilePic: null,
@@ -37,6 +38,7 @@ class App extends Component {
     this.initGoogleAuth = this.initGoogleAuth.bind(this);
     this.createSharableMap = this.createSharableMap.bind(this);
     this.signOut = this.signOut.bind(this);
+    this.onChoose = this.onChoose.bind(this);
   }
 
   initGoogleAuth() {
@@ -105,6 +107,11 @@ class App extends Component {
     this.setState({
       [e.target.id]: e.target.value,
     });
+  }
+
+  onChoose(el) {
+    window.scrollTo(0, 0);
+    this.setState({ midptInfo: el });
   }
 
   findMatches(categoryToMatch, categories) {
@@ -213,7 +220,6 @@ class App extends Component {
       signedInUserProfilePic,
     } = this.state;
     return (
-      <Router>
         <div className="App">
           <GoogleAuth
             signOut={this.signOut}
@@ -222,6 +228,13 @@ class App extends Component {
             signedInUserProfilePic={signedInUserProfilePic}
             initGoogleAuth={this.initGoogleAuth}
           />
+        )}
+        <Maps
+          result={this.state.result}
+          onChoose={this.onChoose}
+          midptInfo={this.state.midptInfo}
+        />
+      </div>
           <h1>midpt</h1>
           {showForm && (
             <Form
@@ -239,11 +252,7 @@ class App extends Component {
               getUserCurrentCoords={this.getUserCurrentCoords}
             />
           )}
-          <Maps result={this.state.result} />
-          <List result={this.state.result} />
         </div>
-        <Route path="/share/:id" component={Share} />
-      </Router>
     );
   }
 }
