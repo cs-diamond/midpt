@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Maps from '../components/Maps';
 import Form from '../components/Form';
+import List from '../components/List';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -63,6 +64,7 @@ class App extends Component {
     const data = {
       points: [this.state.locInput0a, this.state.locInput0b],
       departureTime: departureTime,
+      yelpCategory: this.state.yelpCategory
     };
     this.setState({ loading: true });
     fetch('http://localhost:3000/buildroute', {
@@ -121,9 +123,11 @@ class App extends Component {
             handleYelpCategoryInput={this.handleYelpCategoryInput}
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
+            
           />
         )}
         <Maps result={this.state.result} />
+        <List result={this.state.result} />
       </div>
     );
   }
