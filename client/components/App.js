@@ -42,28 +42,30 @@ class App extends Component {
     this.checkForm = this.checkForm.bind(this);
   }
 
-  checkForm() {
+  checkForm(){
     let box1 = document.getElementById('locInput0a').value;
     let box2 = document.getElementById('locInput0b').value;
-    if (
-      box1.toUpperCase() == box2.toUpperCase() ||
-      box1.length == 0 ||
-      box2.length == 0
-    ) {
-      console.log('if statement');
+    if (box1.toUpperCase()==box2.toUpperCase() || box1.length==0 || box2.length==0){
+      console.log('if statement')
       document.getElementById('formSubmitButton').classList.add('buttonNo');
-      this.setState({ submitButton: false });
-    } else {
+      this.setState(
+        {submitButton: false}
+      )
+    }
+    else {
       console.log('else statement');
       document.getElementById('formSubmitButton').classList.remove('buttonNo');
-      this.setState({ submitButton: true });
-    }
-    console.log('checkform gets through');
-  }
+      this.setState(
+        {submitButton: true}
+      )
+  };
+  console.log('checkform gets through');
+}
 
-  componentDidMount() {
-    this.checkForm();
-  }
+
+componentDidMount(){
+  this.checkForm();
+}
   initGoogleAuth() {
     window.gapi.load('auth2', () => {
       window.gapi.auth2
