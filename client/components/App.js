@@ -18,6 +18,7 @@ class App extends Component {
       yelpCategory: '',
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
+      midptInfo: {},
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -30,6 +31,7 @@ class App extends Component {
     this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
     this.onGoogleFailure = this.onGoogleFailure.bind(this);
     this.signOut = this.signOut.bind(this);
+    this.onChoose = this.onChoose.bind(this);
   }
 
   onGoogleSuccess(googleUser) {
@@ -57,6 +59,11 @@ class App extends Component {
     this.setState({
       [e.target.id]: e.target.value,
     });
+  }
+
+  onChoose(el) {
+    window.scrollTo(0, 0);
+    this.setState({ midptInfo: el });
   }
 
   findMatches(categoryToMatch, categories) {
@@ -173,8 +180,11 @@ class App extends Component {
             getUserCurrentCoords={this.getUserCurrentCoords}
           />
         )}
-        <Maps result={this.state.result} />
-        <List result={this.state.result} />
+        <Maps
+          result={this.state.result}
+          onChoose={this.onChoose}
+          midptInfo={this.state.midptInfo}
+        />
         <GoogleAuth
           signOut={this.signOut}
           onGoogleSuccess={this.onGoogleSuccess}

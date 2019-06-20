@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 
-const initMap = (point, midpt, id) => {
+const initMap = (point, id, midptInfo) => {
+  //console.log('midpt in maps.js', midpt);
   let service = new window.google.maps.DirectionsService();
   let display = new window.google.maps.DirectionsRenderer();
   const pointStr = point.lat + ',' + point.lng;
-  const midptStr = midpt.lat + ',' + midpt.lng;
-  console.log(midpt);
+  const midptStr = midptInfo.coordinates.lat + ',' + midptInfo.coordinates.lng;
+  console.log(midptInfo);
   let map = new window.google.maps.Map(document.getElementById(id), {
     zoom: 7,
-    center: { lat: midpt.lat, lng: midpt.lng }
+    center: { lat: midptInfo.coordinates.lat, lng: midptInfo.coordinates.lng }
   });
   display.setMap(map);
   service.route(
@@ -30,7 +31,7 @@ const initMap = (point, midpt, id) => {
 const Map = props => {
   const id = 'map' + props.keyVal;
   setTimeout(() => {
-    initMap(props.point, props.midpt, id);
+    initMap(props.point, id, props.midptInfo);
   }, 500);
   // split address string from server into its parts (for display)
   const addressParts = props.address.split(', ');
@@ -45,7 +46,7 @@ const Map = props => {
         <span>
           <strong>{'From ' + address}</strong>
           {' (' + city + ') '}
-          <strong>{'to Midpoint'}</strong>
+          <strong>{'to ' + props.midptInfo.name}</strong>
         </span>
         <a href={props.url} target="_blank">Directions</a>
       </div>
