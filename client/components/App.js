@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import Maps from '../components/Maps';
-import Form from '../components/Form';
-import List from '../components/List';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import axios from 'axios';
+import Maps from './Maps';
+import Form from './Form';
+import List from './List';
+import GoogleAuth from './GoogleAuth';
+import Share from './Share';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -9,6 +13,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userCurrentCoords: null,
       radioName: 'p30min',
       radioVal: 30 * 60,
       showForm: true,
@@ -16,7 +21,10 @@ class App extends Component {
       yelpCategoryMatch: '',
       yelpCategoryMatches: [],
       midptInfo: {},
-      submitButton: true
+      submitButton: true,
+      signedInUserEmail: null,
+      signedInUserFirstName: null,
+      signedInUserProfilePic: null,
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -25,6 +33,12 @@ class App extends Component {
     this.displayYelpMatches = this.displayYelpMatches.bind(this);
     this.findMatches = this.findMatches.bind(this);
     this.selectYelpCategoryMatch = this.selectYelpCategoryMatch.bind(this);
+    this.getUserCurrentCoords = this.getUserCurrentCoords.bind(this);
+    this.onGoogleSuccess = this.onGoogleSuccess.bind(this);
+    this.onGoogleFailure = this.onGoogleFailure.bind(this);
+    this.initGoogleAuth = this.initGoogleAuth.bind(this);
+    this.createSharableMap = this.createSharableMap.bind(this);
+    this.signOut = this.signOut.bind(this);
     this.onChoose = this.onChoose.bind(this);
     this.checkForm = this.checkForm.bind(this);
   }
@@ -53,11 +67,78 @@ class App extends Component {
 componentDidMount(){
   this.checkForm();
 }
+  initGoogleAuth() {
+    window.gapi.load('auth2', () => {
+      window.gapi.auth2
+        .init({
+          client_id:
+            '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com',
+        })
+        .then(() => {
+          window.gapi.signin2.render('google-signin', {
+            scope: 'profile email',
+            width: 120,
+            height: 30,
+            longtitle: false,
+            theme: 'dark',
+            onsuccess: this.onGoogleSuccess,
+            onfailure: this.onGoogleFailure,
+          });
+        });
+    });
+  }
+
+  onGoogleSuccess(googleUser) {
+    console.log('Signing into Google!');
+    const profile = googleUser.getBasicProfile();
+    console.log(`Welcome, ${profile.getName()}`);
+    const token = googleUser.getAuthResponse().id_token;
+    axios
+      .post('http://localhost:3000/api/auth/google', {
+        token,
+      })
+      .then(({ data }) => {
+        this.setState({
+          signedInUserEmail: profile.getEmail(),
+          signedInUserFirstName: profile.getGivenName(),
+          signedInUserProfilePic: profile.getImageUrl(),
+        });
+        console.log(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  onGoogleFailure(error) {
+    cconsle.log(error);
+  }
+
+  signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(() => {
+      this.setState(
+        {
+          signedInUserEmail: null,
+        },
+        () => {
+          this.initGoogleAuth();
+        }
+      );
+      console.log('User signed out.');
+    });
+  }
+
   onChange(e) {
     this.setState({
       [e.target.id]: e.target.value,
     });
     this.checkForm();
+  }
+
+  onChoose(el) {
+    window.scrollTo(0, 0);
+    this.setState({ midptInfo: el });
   }
 
   findMatches(categoryToMatch, categories) {
@@ -86,15 +167,27 @@ componentDidMount(){
     });
   }
 
-  onChoose(el){
-    window.scrollTo(0,0);
-    this.setState(
-      {midptInfo: el}
-    );
+  getUserCurrentCoords() {
+    event.preventDefault();
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+    const success = pos => {
+      this.setState({
+        userCurrentCoords: pos.coords,
+      });
+    };
+    const error = err => {
+      console.warn(`ERROR(${err.code}): ${err.message}`);
+    };
+    navigator.geolocation.getCurrentPosition(success, error, options);
   }
 
 
 
+  createSharableMap() {}
   onClick(e) {
     if (this.state.submitButton){
 
@@ -107,10 +200,10 @@ componentDidMount(){
     const data = {
       points: [this.state.locInput0a, this.state.locInput0b],
       departureTime: departureTime,
-      yelpCategory: this.state.yelpCategory
+      yelpCategory: this.state.yelpCategory,
     };
     this.setState({ loading: true });
-    fetch('http://localhost:3000/buildroute', {
+    fetch('http://localhost:3000/api/buildroute', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -151,9 +244,23 @@ componentDidMount(){
     this.setState({ shouldUpdateMap: false });
   }
   render() {
-    const { showForm, yelpCategory, yelpCategoryMatches } = this.state;
+    const {
+      showForm,
+      yelpCategory,
+      yelpCategoryMatches,
+      signedInUserEmail,
+      signedInUserFirstName,
+      signedInUserProfilePic,
+    } = this.state;
     return (
       <div className="App">
+        <GoogleAuth
+          signOut={this.signOut}
+          signedInUserEmail={signedInUserEmail}
+          signedInUserFirstName={signedInUserFirstName}
+          signedInUserProfilePic={signedInUserProfilePic}
+          initGoogleAuth={this.initGoogleAuth}
+        />
         <h1>midpt</h1>
         {showForm && (
           <Form checkForm = {this.checkForm}
@@ -167,11 +274,14 @@ componentDidMount(){
             handleYelpCategoryInput={this.handleYelpCategoryInput}
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
-            
+            getUserCurrentCoords={this.getUserCurrentCoords}
           />
         )}
-        <Maps result={this.state.result} onChoose = {this.onChoose} midptInfo = {this.state.midptInfo}/>
-        
+        <Maps
+          result={this.state.result}
+          onChoose={this.onChoose}
+          midptInfo={this.state.midptInfo}
+        />
       </div>
     );
   }
