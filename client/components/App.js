@@ -42,30 +42,28 @@ class App extends Component {
     this.checkForm = this.checkForm.bind(this);
   }
 
-  checkForm(){
+  checkForm() {
     let box1 = document.getElementById('locInput0a').value;
     let box2 = document.getElementById('locInput0b').value;
-    if (box1.toUpperCase()==box2.toUpperCase() || box1.length==0 || box2.length==0){
-      console.log('if statement')
+    if (
+      box1.toUpperCase() == box2.toUpperCase() ||
+      box1.length == 0 ||
+      box2.length == 0
+    ) {
+      console.log('if statement');
       document.getElementById('formSubmitButton').classList.add('buttonNo');
-      this.setState(
-        {submitButton: false}
-      )
-    }
-    else {
+      this.setState({ submitButton: false });
+    } else {
       console.log('else statement');
       document.getElementById('formSubmitButton').classList.remove('buttonNo');
-      this.setState(
-        {submitButton: true}
-      )
-  };
-  console.log('checkform gets through');
-}
+      this.setState({ submitButton: true });
+    }
+    console.log('checkform gets through');
+  }
 
-
-componentDidMount(){
-  this.checkForm();
-}
+  componentDidMount() {
+    this.checkForm();
+  }
   initGoogleAuth() {
     window.gapi.load('auth2', () => {
       window.gapi.auth2
@@ -174,14 +172,33 @@ componentDidMount(){
       maximumAge: 0,
     };
     const success = pos => {
-      this.setState({
-        userCurrentCoords: pos.coords,
-      });
+      initGeolocation(pos.coords.latitude, pos.coords.longitude);
     };
     const error = err => {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     };
     navigator.geolocation.getCurrentPosition(success, error, options);
+
+    const initGeolocation = (lat, lng) => {
+      let geocoder = new window.google.maps.Geocoder();
+      const latlng = new google.maps.LatLng(lat, lng);
+      geocoder.geocode(
+        {
+          latLng: latlng,
+        },
+        (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (results[1]) {
+              this.setState({ locInput0a: results[1].formatted_address });
+            } else {
+              alert('No results found');
+            }
+          } else {
+            alert('Geocoder failed due to: ' + status);
+          }
+        }
+      );
+    };
   }
 
   onClick(e) {
@@ -195,6 +212,7 @@ componentDidMount(){
         points: [this.state.locInput0a, this.state.locInput0b],
         departureTime: departureTime,
         yelpCategory: this.state.yelpCategory,
+        userCurrentCoords: this.state.userCurrentCoords,
       };
       this.setState({ loading: true });
       fetch('http://localhost:3000/api/buildroute', {
@@ -270,6 +288,8 @@ componentDidMount(){
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
             getUserCurrentCoords={this.getUserCurrentCoords}
+            locInput0a={this.state.locInput0a}
+            locInput0b={this.state.locInput0b}
           />
         )}
         <Maps

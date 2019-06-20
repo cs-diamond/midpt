@@ -10,6 +10,7 @@ const Input = props => {
         name={props.keyName}
         onChange={props.onChange}
         placeholder={props.placeholder}
+        value={props.locInput0a ? props.locInput0a : props.locInput0b}
       />
     </div>
   );

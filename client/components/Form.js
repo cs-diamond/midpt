@@ -47,6 +47,8 @@ const Form = props => {
     yelpCategoryMatches,
     selectYelpCategoryMatch,
     getUserCurrentCoords,
+    locInput0a,
+    locInput0b,
   } = props;
   const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
 
@@ -91,6 +93,8 @@ const Form = props => {
         <Inputs
           numLocationInputGroups={numLocationInputGroups}
           onChange={onChange}
+          locInput0a={locInput0a}
+          locInput0b={locInput0b}
         />
         <div className="locButtons">
           <div className="timeRadio">
@@ -110,7 +114,7 @@ const Form = props => {
               value={30 * 60}
               onClick={onRadioChange}
               defaultChecked="true"
-            /> 
+            />
             <label htmlFor="p30min">{'In 30 mins'}</label>
             <input
               type="radio"
