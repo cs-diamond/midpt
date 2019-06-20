@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const axios = require('axios');
 const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(CLIENT_ID);
 require('dotenv').config();
 app.use(bodyParser.urlencoded({ extended: false }));
 const isochroneController = require('./isochroneController');
@@ -13,11 +13,12 @@ const centroidController = require('./centroidController');
 const yelpController = require('./yelpController');
 const cors = require('cors');
 
-const client = new OAuth2Client(CLIENT_ID);
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const authController = require('./authController')(client, axios);
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 if (process.env.NODE_ENV === 'production') {
   // statically serve everything in the build folder on the route '/build'
@@ -48,7 +49,11 @@ app.post(
   }
 );
 
-app.get('/auth/google', authController.googleSignIn, (req, res) => {
+app.post('/api/auth/google', authController.googleSignIn, (req, res) => {
+  res.cookie('googleSession', res.locals.googleSession, {
+    expires: new Date(Date.now() + 900000),
+    httpOnly: true,
+  });
   return res.status(200).send('success');
 });
 

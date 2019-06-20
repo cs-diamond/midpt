@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Maps from '../components/Maps';
-import Form from '../components/Form';
+import Maps from './Maps';
+import Form from './Form';
+import GoogleAuth from './GoogleAuth';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -30,33 +31,12 @@ class App extends Component {
     this.signOut = this.signOut.bind(this);
   }
 
-  componentDidMount() {
-    window.gapi.load('auth2', () => {
-      window.gapi.auth2
-        .init({
-          client_id:
-            '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com',
-        })
-        .then(() => {
-          window.gapi.signin2.render('google-signin', {
-            scope: 'profile email',
-            width: 250,
-            height: 50,
-            longtitle: false,
-            theme: 'dark',
-            onsuccess: this.onGoogleSuccess,
-            onfailure: this.onGoogleFailure,
-          });
-        });
-    });
-  }
-
   onGoogleSuccess(googleUser) {
     console.log('Signing into Google!');
     const profile = googleUser.getBasicProfile();
     console.log(`Welcome, ${profile.getName()}`);
     const token = googleUser.getAuthResponse().id_token;
-    axios.post('/api/auth/google', {
+    axios.post('http://localhost:3000/api/auth/google', {
       token,
     });
   }
@@ -192,8 +172,11 @@ class App extends Component {
           />
         )}
         <Maps result={this.state.result} />
-        <div id="google-signin" />
-        <button onClick={this.signOut}>Sign out</button>
+        <GoogleAuth
+          signOut={this.signOut}
+          onGoogleSuccess={this.onGoogleSuccess}
+          onGoogleFailure={this.onGoogleFailure}
+        />
       </div>
     );
   }
