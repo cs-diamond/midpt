@@ -14,6 +14,32 @@ body {
   min-height: 80vh;
 }
 
+.googleAuthContainer {
+  align-self: flex-end;
+  margin: 10px;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+
+  .userFirstName {
+    font-weight: 700;
+  }
+
+  .userProfilePicture {
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+}
+
+.signOutButton {
+  border: none;
+  background: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  cursor: pointer;
+}
+
 figure {
   margin: 0;
 }

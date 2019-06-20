@@ -49,6 +49,21 @@ app.post(
   }
 );
 
+app.post(
+  '/buildshareroute',
+  isochroneController.getCoords,
+  isochroneController.generateRoutes,
+  isochroneController.generateIsochrones,
+  centroidController.getCentroid,
+  yelpController.getNearby,
+  googleMapsController.genGoogleMapsURL,
+  yelpController.getRadius,
+  (req, res) => {
+    //console.log('res.locals @ end of middleware chain', res.locals);
+    res.status(200).json(res.locals);
+  }
+);
+
 app.post('/api/auth/google', authController.googleSignIn, (req, res) => {
   res.cookie('googleSession', res.locals.googleSession, {
     expires: new Date(Date.now() + 900000),
