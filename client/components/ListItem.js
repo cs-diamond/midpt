@@ -18,7 +18,7 @@ const ListItem = (props) => {
                         <p className = 'address'>{props.el.location.address1}, {props.el.location.city}</p>
                         <p className = 'rating'>{starsHelper(props.el.rating)}, ({props.el.review_count}) ∙ {props.el.price}</p>
                         </div>
-                        <input type='button' value = 'Choose'/>
+                        <input type='button' onClick = {() =>{props.onChoose(props.el)}} value = 'Choose'/>
                         
                         </li>)
       return (
