@@ -47,7 +47,6 @@ const Form = props => {
     yelpCategoryMatches,
     selectYelpCategoryMatch,
     getUserCurrentCoords,
-    createSharableMap,
   } = props;
   const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
 
