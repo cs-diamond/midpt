@@ -16,22 +16,22 @@ const cors = require('cors');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const authController = require('./authController')(client, axios);
 
-const passport = require('passport');
-const GitHubStrategy = require('passport-github').Strategy;
+// const passport = require('passport');
+// const GitHubStrategy = require('passport-github').Strategy;
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/github/callback"
-  },
-  (accessToken, refreshToken, profile, cb) => {
-    return cb(null, profile);
-  }
-));
+// passport.use(new GitHubStrategy({
+//     clientID: process.env.GITHUB_CLIENT_ID,
+//     clientSecret: process.env.GITHUB_CLIENT_SECRET,
+//     callbackURL: "http://localhost:3000/auth/github/callback"
+//   },
+//   (accessToken, refreshToken, profile, cb) => {
+//     return cb(null, profile);
+//   }
+// ));
 
 if (process.env.NODE_ENV === 'production') {
   // statically serve everything in the build folder on the route '/build'
@@ -71,14 +71,14 @@ app.post('/api/auth/google', authController.googleSignIn, (req, res) => {
   return res.status(200).send('success');
 });
 
-app.get('/auth/github',
-  passport.authenticate('github'));
-
-app.get('/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/')
-  });
+// app.get('/auth/github',
+//   passport.authenticate('github'));
+//
+// app.get('/auth/github/callback',
+//   passport.authenticate('github', { failureRedirect: '/login' }),
+//   (req, res) => {
+//     res.redirect('/')
+// });
 
 app.get('/api/', (req, res) => {
   //do stuff
