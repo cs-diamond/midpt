@@ -8,7 +8,7 @@ const googleMapsController = {
         `https://www.google.com/maps/dir/?api=1&origin=${thisPt.lat},${thisPt.lng}&destination=${res.locals.midpt.lat},${res.locals.midpt.lng}&travelmode=driving`
       );
     }
-    console.log('RES LOCALS', res.locals.directionURLs);
+    // console.log('RES LOCALS', res.locals.directionURLs);
     next();
     // ✅ TEST: res.locals.directionURLs should be an array with URLs with specific URL text content
   },

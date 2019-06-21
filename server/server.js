@@ -58,6 +58,7 @@ app.post(
   yelpController.getRadius,
   (req, res) => {
     //console.log('res.locals @ end of middleware chain', res.locals);
+    console.log('success!');
     res.status(200).json(res.locals);
   }
 );
@@ -81,4 +82,8 @@ app.get('/auth/github/callback',
 
 app.get('/api/', (req, res) => {
   //do stuff
+});
+
+app.use((err, req, res, next) => {
+  res.json(err)
 });

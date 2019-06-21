@@ -7,7 +7,7 @@ const geocode = require('./geocode');
 const isochroneController = {};
 //this function turns addresses into latitude and longitude coordinates
 isochroneController.getCoords = (req, res, next) => {
-  console.log('REQ', req);
+  // console.log('REQ', req);
   res.locals.addresses = [];
   res.locals.points = [];
   //gets the time for our navigation queries
@@ -35,7 +35,7 @@ isochroneController.getCoords = (req, res, next) => {
       return next();
     })
     .catch(err => {
-      res.status(404).json(err);
+      next(err)
     });
 };
 
@@ -58,8 +58,11 @@ isochroneController.generateRoutes = (req, res, next) => {
                &departure_time=${res.locals.departureTimeUNIX}
                &key=` + process.env.GOOGLE_MAPS_API_KEY,
               (err, res, body) => {
-                if (err) reject(err);
-                console.log(JSON.parse(body));
+                if (err) {
+                  console.log('GMAPS GENERATE ROUTE GET REQUEST ERR HANDLER', err);
+                  reject(err);
+                }
+                console.log('GOOGLE MAPS API RESPONSE', JSON.parse(body));
                 resolve(
                   JSON.parse(body).routes[0].legs[0].duration_in_traffic.value
                 );
@@ -70,7 +73,8 @@ isochroneController.generateRoutes = (req, res, next) => {
     }
   }
   //waits for queries and then logs travel times for verification and developer peace of mind
-  Promise.all(promArr).then(values => {
+  Promise.all(promArr)
+    .then(values => {
     console.log('FAIRTIME VALUES', values);
     for (let i = 0; i < res.locals.addresses.length; i += 1) {
       console.log(`finding a midpt for user${i + 1} at ${res.locals.addresses[i]} - estimated travel time is ${values[i] / 60}`)
@@ -80,7 +84,11 @@ isochroneController.generateRoutes = (req, res, next) => {
     console.log('FAIR TIME', res.locals.fairTime);
     // ✅ TEST: res.locals.fairTime should be a real number greater than 0
     next();
-  });
+  })
+    .catch(err => {
+      console.log('GENERATE ROUTES PROMARR ERR HANDLER', err);
+      next(err)
+    });
 };
 
 isochroneController.generateIsochrones = (req, res, next) => {
@@ -111,7 +119,18 @@ isochroneController.generateIsochrones = (req, res, next) => {
                 `&travelMode=driving` +
                 `&key=${process.env.BING_MAPS_API_KEY}`,
               (err, res, body) => {
-                if (err) res.status(404).send(err);
+                if (err) {
+                  console.log('BING GENERATE ISOCHRONES ERR HANDLER', err);
+                  reject(err);
+                }
+                console.log('BING API', body);
+                if (JSON.parse(body).statusDescription !== "OK") {
+                  err = {
+                    message: JSON.parse(body).errors[0].errorDetails[0],
+                    code: JSON.parse(body).errors[0].errorCode
+                  };
+                  return next(err)
+                }
                 const arrayOfLatLngPoints = JSON.parse(body).resourceSets[0]
                   .resources[0].polygons[0].coordinates[0];
                 // sometimes it might not be one polygon!!! so would need to have multiple i's for coordinates

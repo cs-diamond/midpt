@@ -57,7 +57,7 @@ const yelpController = {
     next();
   },
 
- 
+
   getNearby: (req, res, next) => {
        //checking req.body for yelp category
        //console.log('Will',req.body.yelpCategory);
@@ -93,7 +93,7 @@ const yelpController = {
         let yelpPoints = yelpData.map(el => {
           return [el.coordinates.lat, el.coordinates.lng];
         });
-  
+
 
         yelpPoints = turf.points(yelpPoints);
 
@@ -109,14 +109,14 @@ const yelpController = {
 
         res.locals.pointsWithin = pointsWithin;
 
-        
+
 
         pointsWithin.features.forEach((el) => {
-          console.log('📍 pointsWithin latlong: ' + el.geometry.coordinates[0] + ', ' + el.geometry.coordinates[1]);
+          // console.log('📍 pointsWithin latlong: ' + el.geometry.coordinates[0] + ', ' + el.geometry.coordinates[1]);
         });
         const filteredYelpData = [];
         yelpData.forEach(el => {
-          console.log('📍 yelpData latlong: ' + el.coordinates.lat + ', ' + el.coordinates.lng);
+          // console.log('📍 yelpData latlong: ' + el.coordinates.lat + ', ' + el.coordinates.lng);
           pointsWithin.features.forEach(le => {
             if ((el.coordinates.lat === le.geometry.coordinates[0]) && (el.coordinates.lng === le.geometry.coordinates[1])) {
               filteredYelpData.push(el);
@@ -124,13 +124,14 @@ const yelpController = {
           });
         });
 
-        console.log('filteredYelpData', filteredYelpData)
+        // console.log('filteredYelpData', filteredYelpData);
         res.locals.filteredYelpData = filteredYelpData;
 
         return next();
       })
-      .catch(e => {
-        console.log(e);
+      .catch(err => {
+        console.log('YELP GET NEARBY ERR HANDLER', err);
+        next(err);
       });
   },
 };
