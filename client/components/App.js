@@ -97,7 +97,7 @@ class App extends Component {
     console.log(`Welcome, ${profile.getName()}`);
     const token = googleUser.getAuthResponse().id_token;
     axios
-      .post('http://localhost:3000/api/auth/google', {
+      .post('/api/auth/google', {
         token,
       })
       .then(({ data }) => {
@@ -238,7 +238,7 @@ class App extends Component {
         userCurrentCoords: this.state.userCurrentCoords,
       };
       this.setState({ showForm: false });
-      fetch('http://localhost:3000/api/buildroute', {
+      fetch('/api/buildroute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
