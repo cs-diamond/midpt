@@ -46,9 +46,9 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.DefinePlugin({
-      GOOGLE_MAPS_API_KEY: JSON.stringify(myEnv.parsed.GOOGLE_MAPS_API_KEY),
-    }),
+    // new webpack.DefinePlugin({
+    //   GOOGLE_MAPS_API_KEY: JSON.stringify(myEnv.parsed.GOOGLE_MAPS_API_KEY),
+    // }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
