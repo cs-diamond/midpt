@@ -306,7 +306,7 @@ class App extends Component {
           signedInUserProfilePic={signedInUserProfilePic}
           initGoogleAuth={this.initGoogleAuth}
         />
-        <h1>midpt</h1>
+        <h1 className="logo">midpt</h1>
         {showForm ? (
           <Form
             checkForm={this.checkForm}

@@ -14,6 +14,12 @@ body {
   min-height: 80vh;
 }
 
+.logo {
+  @media only screen and (max-width: 800px) {
+    margin-top: 50px;
+  }
+}
+
 .googleAuthContainer {
   align-self: flex-end;
   margin: 10px;
@@ -131,6 +137,7 @@ input[type="button"] {
   padding: 35px;
   margin: 0;
   @media only screen and (max-width: 800px) {
+    padding: 10px;
     margin: 10px;
     border-radius: 5px;
   }
@@ -146,6 +153,10 @@ input[type="button"] {
   max-width: 700px;
   width: 100%;
   padding: 30px;
+  @media only screen and (max-width: 800px) {
+    box-sizing: border-box;
+    padding: 20px 30px;
+  }
 }
 
 .moreAddressesButton {
@@ -264,6 +275,9 @@ input:focus {
   border: none;
   &:focus {
     outline: none;
+  }
+   @media only screen and (max-width: 800px) {
+    margin: 30px 0;
   }
 }
 
