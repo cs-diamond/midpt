@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Spinner from 'react-spinkit';
 import Inputs from './Inputs';
 import Icon from './Icon';
 import colors from '../scss/colors';
@@ -47,6 +48,9 @@ const Form = props => {
     yelpCategoryMatches,
     selectYelpCategoryMatch,
     getUserCurrentCoords,
+    locInput0a,
+    locInput0b,
+    locationLoading,
   } = props;
   const [numLocationInputGroups, setNumLocationInputGroups] = useState(1);
 
@@ -81,10 +85,17 @@ const Form = props => {
       <div className="formFlexGroup">
         <button className="locationPointer" onClick={getUserCurrentCoords}>
           <Icon name="location-pointer" color={colors.gray} width={18} />
+          {locationLoading ? (
+            <Spinner fadeIn="none" name="pulse" color={colors.blue} />
+          ) : (
+            <Icon name="location-pointer" color={colors.blue} width={18} />
+          )}
         </button>
         <Inputs
           numLocationInputGroups={numLocationInputGroups}
           onChange={onChange}
+          locInput0a={locInput0a}
+          locInput0b={locInput0b}
         />
         <div className="locButtons">
           <div className="timeRadio">

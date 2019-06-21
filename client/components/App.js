@@ -6,6 +6,7 @@ import Form from './Form';
 import List from './List';
 import GoogleAuth from './GoogleAuth';
 import Share from './Share';
+import Error from './Error';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -24,7 +25,11 @@ class App extends Component {
       submitButton: true,
       signedInUserEmail: null,
       signedInUserFirstName: null,
-      signedInUserProfilePic: null
+      signedInUserProfilePic: null,
+      locationLoading: false,
+      showError: false,
+      errorMessage:
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint iusto sit vero voluptatum nam itaque rerum dignissimos recusandae, enim obcaecati nobis voluptate mollitia fugiat sapiente fuga doloremque quisquam, tenetur laudantium!',
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -40,20 +45,25 @@ class App extends Component {
     this.signOut = this.signOut.bind(this);
     this.onChoose = this.onChoose.bind(this);
     this.checkForm = this.checkForm.bind(this);
+    this.closeError = this.closeError.bind(this);
   }
 
   checkForm() {
     let box1 = document.getElementById('locInput0a').value;
     let box2 = document.getElementById('locInput0b').value;
-    if (box1.toUpperCase() == box2.toUpperCase() || box1.length == 0 || box2.length == 0) {
-      console.log('if statement')
+    if (
+      box1.toUpperCase() == box2.toUpperCase() ||
+      box1.length == 0 ||
+      box2.length == 0
+    ) {
+      console.log('if statement');
       document.getElementById('formSubmitButton').classList.add('buttonNo');
-      this.setState({submitButton: false})
+      this.setState({ submitButton: false });
     } else {
       console.log('else statement');
       document.getElementById('formSubmitButton').classList.remove('buttonNo');
-      this.setState({submitButton: true})
-    };
+      this.setState({ submitButton: true });
+    }
     console.log('checkform gets through');
   }
 
@@ -81,16 +91,29 @@ class App extends Component {
     const profile = googleUser.getBasicProfile();
     console.log(`Welcome, ${profile.getName()}`);
     const token = googleUser.getAuthResponse().id_token;
-    axios.post('http://localhost:3000/api/auth/google', {token}).then(({data}) => {
-      this.setState({signedInUserEmail: profile.getEmail(), signedInUserFirstName: profile.getGivenName(), signedInUserProfilePic: profile.getImageUrl()});
-      console.log(data);
-    }).catch(error => {
-      console.log(error);
-    });
+    axios
+      .post('/api/auth/google', {
+        token,
+      })
+      .then(({ data }) => {
+        this.setState({
+          signedInUserEmail: profile.getEmail(),
+          signedInUserFirstName: profile.getGivenName(),
+          signedInUserProfilePic: profile.getImageUrl(),
+        });
+        console.log(data);
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({
+          showError: true,
+          errorMessage: error,
+        });
+      });
   }
 
   onGoogleFailure(error) {
-    cconsle.log(error);
+    console.log(error);
   }
 
   signOut() {
@@ -117,6 +140,13 @@ class App extends Component {
     this.setState({midptInfo: el});
   }
 
+  closeError() {
+    this.setState({
+      showError: false,
+      errorMessage: '',
+    });
+  }
+
   findMatches(categoryToMatch, categories) {
     return categories.filter(category => {
       const regex = new RegExp(categoryToMatch, 'gi');
@@ -140,18 +170,45 @@ class App extends Component {
 
   getUserCurrentCoords() {
     event.preventDefault();
+    this.setState({
+      locationLoading: true,
+    });
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
     };
     const success = pos => {
-      this.setState({userCurrentCoords: pos.coords});
+      initGeolocation(pos.coords.latitude, pos.coords.longitude);
     };
     const error = err => {
       console.warn(`ERROR(${err.code}): ${err.message}`);
     };
     navigator.geolocation.getCurrentPosition(success, error, options);
+
+    const initGeolocation = (lat, lng) => {
+      let geocoder = new window.google.maps.Geocoder();
+      const latlng = new google.maps.LatLng(lat, lng);
+      geocoder.geocode(
+        {
+          latLng: latlng,
+        },
+        (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (results[1]) {
+              this.setState({
+                locInput0a: results[1].formatted_address,
+                locationLoading: false,
+              });
+            } else {
+              alert('No results found');
+            }
+          } else {
+            alert('Geocoder failed due to: ' + status);
+          }
+        }
+      );
+    };
   }
 
   onClick(e) {
@@ -168,8 +225,8 @@ class App extends Component {
         departureTime: departureTime,
         yelpCategory: this.state.yelpCategory
       };
-      this.setState({loading: true});
-      fetch('http://localhost:3000/api/buildroute', {
+      this.setState({loading: true, showForm: false});
+      fetch('/api/buildroute', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -194,6 +251,33 @@ class App extends Component {
             yelps: data.filteredYelpData
           },
           showForm: false
+        body: JSON.stringify(data),
+      })
+        .then(response => {
+          console.log('raw server response', response);
+          return response.json();
+        })
+        .then(data => {
+          this.setState({ loading: false });
+          console.log('data', data);
+          this.setState({
+            result: {
+              point1: data.points[0],
+              point2: data.points[1],
+              midpt: data.midpt,
+              aToMidptURL: data.directionURLs[0],
+              bToMidptURL: data.directionURLs[1],
+              address1: data.addresses[0],
+              address2: data.addresses[1],
+              isochrones: data.isochrones,
+              yelps: data.filteredYelpData,
+            },
+            showForm: false,
+          });
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ showForm: true });
         });
       });
     }
@@ -226,6 +310,26 @@ class App extends Component {
         {
           showForm &&
           (<Form
+      signedInUserProfilePic,
+      locationLoading,
+      showError,
+      errorMessage,
+    } = this.state;
+    return (
+      <div className="App">
+        {showError && (
+          <Error closeError={this.closeError} error={errorMessage} />
+        )}
+        <GoogleAuth
+          signOut={this.signOut}
+          signedInUserEmail={signedInUserEmail}
+          signedInUserFirstName={signedInUserFirstName}
+          signedInUserProfilePic={signedInUserProfilePic}
+          initGoogleAuth={this.initGoogleAuth}
+        />
+        <h1 className="logo">midpt</h1>
+        {showForm ? (
+          <Form
             checkForm={this.checkForm}
             onChange={this.onChange}
             onClick={this.onClick}
@@ -241,6 +345,13 @@ class App extends Component {
             />
           )
         }
+            locInput0a={this.state.locInput0a}
+            locInput0b={this.state.locInput0b}
+            locationLoading={locationLoading}
+          />
+        ) : (
+          !this.state.result && <div className="loading">Loading...</div>
+        )}
         <Maps
           result={this.state.result}
           midptInfo={this.state.midptInfo}
