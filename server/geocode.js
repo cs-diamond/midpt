@@ -13,7 +13,10 @@ module.exports = locationStr => {
         process.env.GOOGLE_MAPS_API_KEY, // grabs this from .env. make sure to create one of your own with your own api keys!
       { json: true },
       (err, response, body) => {
-        if (err) reject(err);
+        if (err) {
+          console.log('GMAPS GEOCODE ERR HANDLER', err);
+          reject(err);
+        }
         result.latLng = body.results[0].geometry.location;
         result.formatted_address = body['results'][0].formatted_address;
         resolve(result);
