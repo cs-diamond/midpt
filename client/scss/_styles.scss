@@ -20,6 +20,9 @@ body {
   display: flex;
   flex-flow: row;
   align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
 
   .userFirstName {
     font-weight: 700;
@@ -40,6 +43,28 @@ body {
   cursor: pointer;
 }
 
+.errorContainer {
+  position: absolute;
+  z-index: 10;
+  background: $lightgrey;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px 0px rgba(0, 0, 0, 0.1);
+  .errorMessage {
+    margin: 10px;
+  }
+
+  button {
+    border: none;
+    background: none;
+    border-top: 1px solid $white;
+    width: 100%;
+    padding: 10px;
+    color: $blue;
+    cursor: pointer;
+  }
+}
 figure {
   margin: 0;
 }
@@ -445,5 +470,31 @@ input[type="button"].buttonNo {
     background: #f6f6f6;
     color: rgba(0,0,0,.1);
     transition: all ease-in-out 100ms;
+  }
+}
+
+.scale-up-center {
+	-webkit-animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+	        animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+@-webkit-keyframes scale-up-center {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+@keyframes scale-up-center {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
   }
 }

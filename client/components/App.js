@@ -6,6 +6,7 @@ import Form from './Form';
 import List from './List';
 import GoogleAuth from './GoogleAuth';
 import Share from './Share';
+import Error from './Error';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
@@ -25,6 +26,10 @@ class App extends Component {
       signedInUserEmail: null,
       signedInUserFirstName: null,
       signedInUserProfilePic: null,
+      locationLoading: false,
+      showError: false,
+      errorMessage:
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint iusto sit vero voluptatum nam itaque rerum dignissimos recusandae, enim obcaecati nobis voluptate mollitia fugiat sapiente fuga doloremque quisquam, tenetur laudantium!',
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -40,6 +45,7 @@ class App extends Component {
     this.signOut = this.signOut.bind(this);
     this.onChoose = this.onChoose.bind(this);
     this.checkForm = this.checkForm.bind(this);
+    this.closeError = this.closeError.bind(this);
   }
 
   checkForm() {
@@ -104,6 +110,10 @@ class App extends Component {
       })
       .catch(error => {
         console.log(error);
+        this.setState({
+          showError: true,
+          errorMessage: error,
+        });
       });
   }
 
@@ -138,6 +148,13 @@ class App extends Component {
     this.setState({ midptInfo: el });
   }
 
+  closeError() {
+    this.setState({
+      showError: false,
+      errorMessage: '',
+    });
+  }
+
   findMatches(categoryToMatch, categories) {
     return categories.filter(category => {
       const regex = new RegExp(categoryToMatch, 'gi');
@@ -166,6 +183,9 @@ class App extends Component {
 
   getUserCurrentCoords() {
     event.preventDefault();
+    this.setState({
+      locationLoading: true,
+    });
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
@@ -189,7 +209,10 @@ class App extends Component {
         (results, status) => {
           if (status === google.maps.GeocoderStatus.OK) {
             if (results[1]) {
-              this.setState({ locInput0a: results[1].formatted_address });
+              this.setState({
+                locInput0a: results[1].formatted_address,
+                locationLoading: false,
+              });
             } else {
               alert('No results found');
             }
@@ -214,7 +237,7 @@ class App extends Component {
         yelpCategory: this.state.yelpCategory,
         userCurrentCoords: this.state.userCurrentCoords,
       };
-      this.setState({ loading: true });
+      this.setState({ showForm: false });
       fetch('http://localhost:3000/api/buildroute', {
         method: 'POST',
         headers: {
@@ -243,6 +266,10 @@ class App extends Component {
             },
             showForm: false,
           });
+        })
+        .catch(error => {
+          console.log(error);
+          this.setState({ showForm: true });
         });
     }
   }
@@ -263,9 +290,15 @@ class App extends Component {
       signedInUserEmail,
       signedInUserFirstName,
       signedInUserProfilePic,
+      locationLoading,
+      showError,
+      errorMessage,
     } = this.state;
     return (
       <div className="App">
+        {showError && (
+          <Error closeError={this.closeError} error={errorMessage} />
+        )}
         <GoogleAuth
           signOut={this.signOut}
           signedInUserEmail={signedInUserEmail}
@@ -274,7 +307,7 @@ class App extends Component {
           initGoogleAuth={this.initGoogleAuth}
         />
         <h1>midpt</h1>
-        {showForm && (
+        {showForm ? (
           <Form
             checkForm={this.checkForm}
             onChange={this.onChange}
@@ -290,7 +323,10 @@ class App extends Component {
             getUserCurrentCoords={this.getUserCurrentCoords}
             locInput0a={this.state.locInput0a}
             locInput0b={this.state.locInput0b}
+            locationLoading={locationLoading}
           />
+        ) : (
+          !this.state.result && <div className="loading">Loading...</div>
         )}
         <Maps
           result={this.state.result}
