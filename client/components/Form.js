@@ -84,7 +84,6 @@ const Form = props => {
     <form id="form" className="formContainer">
       <div className="formFlexGroup">
         <button className="locationPointer" onClick={getUserCurrentCoords}>
-          <Icon name="location-pointer" color={colors.gray} width={18} />
           {locationLoading ? (
             <Spinner fadeIn="none" name="pulse" color={colors.blue} />
           ) : (
@@ -147,13 +146,13 @@ const Form = props => {
             <div className="locInput">
               <label htmlFor="yelpCategory">Meet at </label>
               <input
-                 type="text"
-                 id="yelpCategory"
-                 placeholder="Enter a category..."
-                 className="locInput"
-                 onChange={e => handleYelpCategoryInput(e, yelpCategory)}
-               />
-           </div>
+                type="text"
+                id="yelpCategory"
+                placeholder="Enter a category..."
+                className="locInput"
+                onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -186,7 +185,5 @@ const Form = props => {
 //     </ul>
 //   </div>
 // </label>
-
-
 
 export default Form;
