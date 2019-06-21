@@ -11,7 +11,7 @@ body {
   align-items: center;
   align-content: center;
   justify-content: center;
-  min-height: 80vh;
+  min-height: 90vh;
 }
 
 .logo {
@@ -21,7 +21,7 @@ body {
 }
 
 .googleAuthContainer {
-  align-self: flex-end;
+  /*align-self: flex-end;*/
   margin: 10px;
   display: flex;
   flex-flow: row;
@@ -29,6 +29,16 @@ body {
   position: absolute;
   top: 0;
   right: 0;
+  /* A desperate attempt to maintain the theme: */
+  filter: grayscale(100%);
+  opacity: .25;
+
+  &:hover {
+    filter: none;
+    opacity: 1;
+    transition: opacity ease-in-out .2s;
+    transition: filter ease-in-out .2s;
+  }
 
   .userFirstName {
     font-weight: 700;
@@ -43,6 +53,7 @@ body {
 .signOutButton {
   border: none;
   background: none;
+
   &:hover {
     text-decoration: underline;
   }
@@ -140,6 +151,7 @@ input[type="button"] {
     padding: 10px;
     margin: 10px;
     border-radius: 5px;
+    padding: 0;
   }
 }
 
@@ -151,7 +163,7 @@ input[type="button"] {
   justify-content: center;
   border-radius: 10px;
   max-width: 700px;
-  width: 100%;
+  width: calc(100% - 60px);
   padding: 30px;
   @media only screen and (max-width: 800px) {
     box-sizing: border-box;
@@ -166,34 +178,38 @@ input[type="button"] {
   top: 0;
   right: 0;
   margin: 5px 0;
- &:hover {
+
+  &:hover {
     svg g {
       fill: $white;
       transition: fill ease-in-out 100ms;
     }
+
     svg circle {
       stroke: $blue;
       fill: $blue;
       transition: all ease-in-out 100ms;
-      transition-property: fill, stroke; 
+      transition-property: fill, stroke;
     }
     background: none !important;
   }
- 
 }
 
 .locInputGroup {
   width: 100%;
+
   > div:not(:last-of-type) {
     margin-bottom: 10px !important;
   }
 }
 
 .button {
- cursor: pointer;
+  cursor: pointer;
+
   &:focus {
     outline: none;
   }
+
   &:hover {
     background: $blue;
     color: $white;
@@ -209,12 +225,12 @@ input[type="button"] {
   background: $lightgrey;
 }
 
-.locInputs, .locButtons {
+.locButtons,
+.locInputs {
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-
   @media only screen and (max-width: 800px) {
     flex-flow: row wrap;
   }
@@ -254,9 +270,9 @@ input:focus {
 .locButtons {
   margin-top: 15px;
   @media only screen and (max-width: 800px) {
-    * { 
+    * {
       display: block;
-      margin: 0 auto; 
+      margin: 0 auto;
     }
   }
 }
@@ -267,17 +283,18 @@ input:focus {
 
 .locationPointer {
   position: absolute;
-  top: 0;
-  left: 0;
-  margin: 40px 0px;
+  top: 38px;
+  left: calc(48% - 26px);
   cursor: pointer;
   background: none;
   border: none;
+
   &:focus {
     outline: none;
   }
-   @media only screen and (max-width: 800px) {
-    margin: 30px 0;
+  @media only screen and (max-width: 800px) {
+      left: auto;
+      right: 35px;
   }
 }
 
@@ -292,7 +309,8 @@ input[type="button"] {
   cursor: pointer;
 }
 
-input[type="button"]:active, label:active {
+input[type="button"]:active,
+label:active {
   background: lightgray;
 }
 
@@ -308,6 +326,10 @@ input[type=radio] {
 
 .timeRadio {
   margin-top: 8px;
+  @media only screen and (max-width: 800px) {
+    width: 100%;
+    border-radius: 10px;
+  }
 }
 
 .timeRadio span {
@@ -336,10 +358,8 @@ input[type=radio] {
 }
 
 input#yelpCategory {
-  width: 150px;
-  background: $grey;
-  border-radius: 5px;
-  padding: 7px 10px;
+  width: 190px;
+
   &::placeholder {
     text-align: left;
   }
@@ -352,6 +372,7 @@ label.yelpCategory {
   border-radius: 5px !important;
   padding: 0;
 }
+
 span.yelpCategory {
   margin-left: 20px;
   @media only screen and (max-width: 800px) {
@@ -372,14 +393,15 @@ div.yelpCategory {
   list-style: none;
   background: $white;
   padding: 0;
-  margin: 0;
-  margin-top: 30px;
+  margin: 30px 0 0;
   padding-top: 5px;
+
   li {
     padding: 10px;
     border-bottom: 2px solid $lightgrey;
     background: $white;
     width: 150px;
+
     &:hover {
       background: $blue;
       color: $white;
@@ -430,21 +452,25 @@ img {
   border-bottom: 0.5px solid #979797;
   align-items: center;
   align-content: center;
-
-
 }
- .list {
-   width: calc(100%-40px);
-   background-color: #f6f6f6;
-   padding: 0 20px 20px;
- }
 
- .rating, .address {
-   font-size: smaller;
-   opacity: 0.7;
-   margin: 0;
+.list li:last-of-type {
+  border-bottom: none;
+}
 
- }
+.list {
+  width: calc(100%-40px);
+  background-color: #f6f6f6;
+  padding: 0 20px;
+}
+
+.address,
+.rating {
+  font-size: smaller;
+  opacity: 0.7;
+  margin: 0;
+}
+
 h3 {
   margin: 2px auto;
 }
@@ -460,7 +486,6 @@ h3 {
 
 .list li div {
   flex-grow: 2;
-
 }
 
 .list li figure {
@@ -486,6 +511,18 @@ input[type="button"].buttonNo {
     transition: all ease-in-out 100ms;
   }
 }
+
+.yelps {
+  margin-right: 7px;
+  @media only screen and (max-width: 800px) {
+    margin: 12px auto auto;
+    width: 100%;
+  }
+}
+
+.yelps .locInput {
+  width: 100%;
+  margin-right: 0;
 
 .scale-up-center {
 	-webkit-animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
