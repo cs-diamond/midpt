@@ -80,13 +80,7 @@ const Form = props => {
     <form id="form" className="formContainer">
       <div className="formFlexGroup">
         <button className="locationPointer" onClick={getUserCurrentCoords}>
-          <Icon name="location-pointer" color={colors.blue} width={18} />
-        </button>
-        <button
-          onClick={addMoreAddressInputs}
-          className="button moreAddressesButton"
-        >
-          <Icon name="plus" color={colors.blue} />
+          <Icon name="location-pointer" color={colors.gray} width={18} />
         </button>
         <Inputs
           numLocationInputGroups={numLocationInputGroups}
@@ -110,7 +104,7 @@ const Form = props => {
               value={30 * 60}
               onClick={onRadioChange}
               defaultChecked="true"
-            /> 
+            />
             <label htmlFor="p30min">{'In 30 mins'}</label>
             <input
               type="radio"
@@ -137,20 +131,18 @@ const Form = props => {
                 pattern="(1[0-2]|0?[1-9]):[0-5][0-9]"
               />
             </label>
-            <span className="inputLabel yelpCategory">Meet at</span>
-            <label className="yelpCategory" htmlFor="yelp-category">
-              <div className="yelpCategory">
-                <input
-                  type="text"
-                  id="yelpCategory"
-                  placeholder="Enter a category...."
-                  onChange={e => handleYelpCategoryInput(e, yelpCategory)}
-                />
-                <ul className="yelpCategoryMatches">
-                  {renderYelpCategoryMatches()}
-                </ul>
-              </div>
-            </label>
+          </div>
+          <div className="yelps">
+            <div className="locInput">
+              <label htmlFor="yelpCategory">Meet at </label>
+              <input
+                 type="text"
+                 id="yelpCategory"
+                 placeholder="Enter a category..."
+                 className="locInput"
+                 onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+               />
+           </div>
           </div>
         </div>
       </div>
@@ -160,5 +152,30 @@ const Form = props => {
 };
 
 // onClick={() => selectOnInput(props.onRadioChange)}
+
+// <button
+//   onClick={addMoreAddressInputs}
+//   className="button moreAddressesButton"
+// >
+//   <Icon name="plus" color={colors.blue} />
+// </button>
+
+// <span className="inputLabel yelpCategory">Meet at</span>
+// <label className="yelpCategory" htmlFor="yelp-category">
+//   <div className="yelpCategory">
+//     <input
+//       type="text"
+//       id="yelpCategory"
+//       placeholder="Enter a category..."
+//       className="locInput"
+//       onChange={e => handleYelpCategoryInput(e, yelpCategory)}
+//     />
+//     <ul className="yelpCategoryMatches">
+//       {renderYelpCategoryMatches()}
+//     </ul>
+//   </div>
+// </label>
+
+
 
 export default Form;

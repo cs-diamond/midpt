@@ -50,7 +50,7 @@ const Maps = props => {
         time="7:00"
         yelps={props.result.yelps}
       />
-      <List result={props.result} onChoose = {props.onChoose}/>
+    <List result={props.result} onChoose={props.onChoose}/>
       </section>
     );
   }

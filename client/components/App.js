@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
 import axios from 'axios';
 import Maps from './Maps';
 import Form from './Form';
@@ -24,7 +24,7 @@ class App extends Component {
       submitButton: true,
       signedInUserEmail: null,
       signedInUserFirstName: null,
-      signedInUserProfilePic: null,
+      signedInUserProfilePic: null
     };
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -42,48 +42,37 @@ class App extends Component {
     this.checkForm = this.checkForm.bind(this);
   }
 
-  checkForm(){
+  checkForm() {
     let box1 = document.getElementById('locInput0a').value;
     let box2 = document.getElementById('locInput0b').value;
-    if (box1.toUpperCase()==box2.toUpperCase() || box1.length==0 || box2.length==0){
+    if (box1.toUpperCase() == box2.toUpperCase() || box1.length == 0 || box2.length == 0) {
       console.log('if statement')
       document.getElementById('formSubmitButton').classList.add('buttonNo');
-      this.setState(
-        {submitButton: false}
-      )
-    }
-    else {
+      this.setState({submitButton: false})
+    } else {
       console.log('else statement');
       document.getElementById('formSubmitButton').classList.remove('buttonNo');
-      this.setState(
-        {submitButton: true}
-      )
-  };
-  console.log('checkform gets through');
-}
+      this.setState({submitButton: true})
+    };
+    console.log('checkform gets through');
+  }
 
-
-componentDidMount(){
-  this.checkForm();
-}
+  componentDidMount() {
+    this.checkForm();
+  }
   initGoogleAuth() {
     window.gapi.load('auth2', () => {
-      window.gapi.auth2
-        .init({
-          client_id:
-            '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com',
-        })
-        .then(() => {
-          window.gapi.signin2.render('google-signin', {
-            scope: 'profile email',
-            width: 120,
-            height: 30,
-            longtitle: false,
-            theme: 'dark',
-            onsuccess: this.onGoogleSuccess,
-            onfailure: this.onGoogleFailure,
-          });
+      window.gapi.auth2.init({client_id: '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com'}).then(() => {
+        window.gapi.signin2.render('google-signin', {
+          scope: 'profile email',
+          width: 120,
+          height: 30,
+          longtitle: false,
+          theme: 'dark',
+          onsuccess: this.onGoogleSuccess,
+          onfailure: this.onGoogleFailure
         });
+      });
     });
   }
 
@@ -92,21 +81,12 @@ componentDidMount(){
     const profile = googleUser.getBasicProfile();
     console.log(`Welcome, ${profile.getName()}`);
     const token = googleUser.getAuthResponse().id_token;
-    axios
-      .post('http://localhost:3000/api/auth/google', {
-        token,
-      })
-      .then(({ data }) => {
-        this.setState({
-          signedInUserEmail: profile.getEmail(),
-          signedInUserFirstName: profile.getGivenName(),
-          signedInUserProfilePic: profile.getImageUrl(),
-        });
-        console.log(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    axios.post('http://localhost:3000/api/auth/google', {token}).then(({data}) => {
+      this.setState({signedInUserEmail: profile.getEmail(), signedInUserFirstName: profile.getGivenName(), signedInUserProfilePic: profile.getImageUrl()});
+      console.log(data);
+    }).catch(error => {
+      console.log(error);
+    });
   }
 
   onGoogleFailure(error) {
@@ -116,28 +96,25 @@ componentDidMount(){
   signOut() {
     const auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(() => {
-      this.setState(
-        {
-          signedInUserEmail: null,
-        },
-        () => {
-          this.initGoogleAuth();
-        }
-      );
+      this.setState({
+        signedInUserEmail: null
+      }, () => {
+        this.initGoogleAuth();
+      });
       console.log('User signed out.');
     });
   }
 
   onChange(e) {
     this.setState({
-      [e.target.id]: e.target.value,
+      [e.target.id]: e.target.value
     });
     this.checkForm();
   }
 
   onChoose(el) {
     window.scrollTo(0, 0);
-    this.setState({ midptInfo: el });
+    this.setState({midptInfo: el});
   }
 
   findMatches(categoryToMatch, categories) {
@@ -154,16 +131,11 @@ componentDidMount(){
 
   handleYelpCategoryInput(e, value) {
     const matches = this.displayYelpMatches(value);
-    this.setState({
-      yelpCategory: e.target.value,
-      yelpCategoryMatches: matches,
-    });
+    this.setState({yelpCategory: e.target.value, yelpCategoryMatches: matches});
   }
 
   selectYelpCategoryMatch(e) {
-    this.setState({
-      yelpCategoryMatch: e.target.innerText,
-    });
+    this.setState({yelpCategoryMatch: e.target.innerText});
   }
 
   getUserCurrentCoords() {
@@ -171,12 +143,10 @@ componentDidMount(){
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
-      maximumAge: 0,
+      maximumAge: 0
     };
     const success = pos => {
-      this.setState({
-        userCurrentCoords: pos.coords,
-      });
+      this.setState({userCurrentCoords: pos.coords});
     };
     const error = err => {
       console.warn(`ERROR(${err.code}): ${err.message}`);
@@ -192,51 +162,54 @@ componentDidMount(){
       departureTime = departureTime.toISOString();
       console.log('(' + departureTime + ')');
       const data = {
-        points: [this.state.locInput0a, this.state.locInput0b],
+        points: [
+          this.state.locInput0a, this.state.locInput0b
+        ],
         departureTime: departureTime,
-        yelpCategory: this.state.yelpCategory,
+        yelpCategory: this.state.yelpCategory
       };
-      this.setState({ loading: true });
+      this.setState({loading: true});
       fetch('http://localhost:3000/api/buildroute', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
-      })
-        .then(response => {
-          console.log('raw server response', response);
-          return response.json();
-        })
-        .then(data => {
-          this.setState({ loading: false });
-          console.log('data', data);
-          this.setState({
-            result: {
-              point1: data.points[0],
-              point2: data.points[1],
-              midpt: data.midpt,
-              aToMidptURL: data.directionURLs[0],
-              bToMidptURL: data.directionURLs[1],
-              address1: data.addresses[0],
-              address2: data.addresses[1],
-              isochrones: data.isochrones,
-              yelps: data.filteredYelpData,
-            },
-            showForm: false,
-          });
+        body: JSON.stringify(data)
+      }).then(response => {
+        console.log('raw server response', response);
+        return response.json();
+      }).then(data => {
+        this.setState({loading: false});
+        console.log('data', data);
+        this.setState({
+          result: {
+            point1: data.points[0],
+            point2: data.points[1],
+            midpt: data.midpt,
+            aToMidptURL: data.directionURLs[0],
+            bToMidptURL: data.directionURLs[1],
+            address1: data.addresses[0],
+            address2: data.addresses[1],
+            isochrones: data.isochrones,
+            yelps: data.filteredYelpData
+          },
+          showForm: false
         });
+      });
     }
   }
+
   onRadioChange(e) {
     this.setState({
       radioVal: [e.target.value],
-      radioName: [e.target.id],
+      radioName: [e.target.id]
     });
   }
+
   hasUpdatedMap() {
-    this.setState({ shouldUpdateMap: false });
+    this.setState({shouldUpdateMap: false});
   }
+
   render() {
     const {
       showForm,
@@ -244,20 +217,15 @@ componentDidMount(){
       yelpCategoryMatches,
       signedInUserEmail,
       signedInUserFirstName,
-      signedInUserProfilePic,
+      signedInUserProfilePic
     } = this.state;
     return (
       <div className="App">
-        <GoogleAuth
-          signOut={this.signOut}
-          signedInUserEmail={signedInUserEmail}
-          signedInUserFirstName={signedInUserFirstName}
-          signedInUserProfilePic={signedInUserProfilePic}
-          initGoogleAuth={this.initGoogleAuth}
-        />
+
         <h1>midpt</h1>
-        {showForm && (
-          <Form
+        {
+          showForm &&
+          (<Form
             checkForm={this.checkForm}
             onChange={this.onChange}
             onClick={this.onClick}
@@ -270,16 +238,25 @@ componentDidMount(){
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
             getUserCurrentCoords={this.getUserCurrentCoords}
-          />
-        )}
+            />
+          )
+        }
         <Maps
           result={this.state.result}
-          onChoose={this.onChoose}
           midptInfo={this.state.midptInfo}
-        />
+          onChoose={this.onChoose}
+          />
       </div>
     );
   }
 }
+
+// <GoogleAuth
+//   signOut={this.signOut}
+//   signedInUserEmail={signedInUserEmail}
+//   signedInUserFirstName={signedInUserFirstName}
+//   signedInUserProfilePic={signedInUserProfilePic}
+//   initGoogleAuth={this.initGoogleAuth}
+//   />
 
 export default App;
