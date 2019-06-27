@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom';
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import Spinner from 'react-spinkit';
 import axios from 'axios';
 import Maps from './Maps';
 import Form from './Form';
@@ -7,8 +8,11 @@ import List from './List';
 import GoogleAuth from './GoogleAuth';
 import Share from './Share';
 import Error from './Error';
+import colors from '../scss/colors';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
+
+// Hi
 
 class App extends Component {
   constructor(props) {
@@ -72,17 +76,22 @@ class App extends Component {
   }
   initGoogleAuth() {
     window.gapi.load('auth2', () => {
-      window.gapi.auth2.init({client_id: '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com'}).then(() => {
-        window.gapi.signin2.render('google-signin', {
-          scope: 'profile email',
-          width: 120,
-          height: 30,
-          longtitle: false,
-          theme: 'dark',
-          onsuccess: this.onGoogleSuccess,
-          onfailure: this.onGoogleFailure
+      window.gapi.auth2
+        .init({
+          client_id:
+            '706985961819-lfqvbdctqu7v8a8q868u72qgnm4mltnb.apps.googleusercontent.com',
+        })
+        .then(() => {
+          window.gapi.signin2.render('google-signin', {
+            scope: 'profile email',
+            width: 120,
+            height: 30,
+            longtitle: false,
+            theme: 'dark',
+            onsuccess: this.onGoogleSuccess,
+            onfailure: this.onGoogleFailure,
+          });
         });
-      });
     });
   }
 
@@ -107,7 +116,7 @@ class App extends Component {
         console.log(error);
         this.setState({
           showError: true,
-          errorMessage: error,
+          errorMessage: 'Oops!',
         });
       });
   }
@@ -119,25 +128,28 @@ class App extends Component {
   signOut() {
     const auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(() => {
-      this.setState({
-        signedInUserEmail: null
-      }, () => {
-        this.initGoogleAuth();
-      });
+      this.setState(
+        {
+          signedInUserEmail: null,
+        },
+        () => {
+          this.initGoogleAuth();
+        }
+      );
       console.log('User signed out.');
     });
   }
 
   onChange(e) {
     this.setState({
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
     this.checkForm();
   }
 
   onChoose(el) {
     window.scrollTo(0, 0);
-    this.setState({midptInfo: el});
+    this.setState({ midptInfo: el });
   }
 
   closeError() {
@@ -161,11 +173,14 @@ class App extends Component {
 
   handleYelpCategoryInput(e, value) {
     const matches = this.displayYelpMatches(value);
-    this.setState({yelpCategory: e.target.value, yelpCategoryMatches: matches});
+    this.setState({
+      yelpCategory: e.target.value,
+      yelpCategoryMatches: matches,
+    });
   }
 
   selectYelpCategoryMatch(e) {
-    this.setState({yelpCategoryMatch: e.target.innerText});
+    this.setState({ yelpCategoryMatch: e.target.innerText });
   }
 
   getUserCurrentCoords() {
@@ -176,7 +191,7 @@ class App extends Component {
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
-      maximumAge: 0
+      maximumAge: 0,
     };
     const success = pos => {
       initGeolocation(pos.coords.latitude, pos.coords.longitude);
@@ -219,38 +234,17 @@ class App extends Component {
       departureTime = departureTime.toISOString();
       console.log('(' + departureTime + ')');
       const data = {
-        points: [
-          this.state.locInput0a, this.state.locInput0b
-        ],
+        points: [this.state.locInput0a, this.state.locInput0b],
         departureTime: departureTime,
-        yelpCategory: this.state.yelpCategory
+        yelpCategory: this.state.yelpCategory,
+        userCurrentCoords: this.state.userCurrentCoords,
       };
-      this.setState({loading: true, showForm: false});
+      this.setState({ showForm: false });
       fetch('/api/buildroute', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
-      }).then(response => {
-        console.log('raw server response', response);
-        return response.json();
-      }).then(data => {
-        this.setState({loading: false});
-        console.log('data', data);
-        this.setState({
-          result: {
-            point1: data.points[0],
-            point2: data.points[1],
-            midpt: data.midpt,
-            aToMidptURL: data.directionURLs[0],
-            bToMidptURL: data.directionURLs[1],
-            address1: data.addresses[0],
-            address2: data.addresses[1],
-            isochrones: data.isochrones,
-            yelps: data.filteredYelpData
-          },
-          showForm: false
         body: JSON.stringify(data),
       })
         .then(response => {
@@ -279,19 +273,18 @@ class App extends Component {
           console.log(error);
           this.setState({ showForm: true });
         });
-      });
     }
   }
 
   onRadioChange(e) {
     this.setState({
       radioVal: [e.target.value],
-      radioName: [e.target.id]
+      radioName: [e.target.id],
     });
   }
 
   hasUpdatedMap() {
-    this.setState({shouldUpdateMap: false});
+    this.setState({ shouldUpdateMap: false });
   }
 
   render() {
@@ -301,18 +294,9 @@ class App extends Component {
       yelpCategoryMatches,
       signedInUserEmail,
       signedInUserFirstName,
-      signedInUserProfilePic
-    } = this.state;
-    return (
-      <div className="App">
-
-        <h1>midpt</h1>
-        {
-          showForm &&
-          (<Form
       signedInUserProfilePic,
-      locationLoading,
       showError,
+      locationLoading,
       errorMessage,
     } = this.state;
     return (
@@ -342,32 +326,23 @@ class App extends Component {
             yelpCategoryMatches={yelpCategoryMatches}
             selectYelpCategoryMatch={this.selectYelpCategoryMatch}
             getUserCurrentCoords={this.getUserCurrentCoords}
-            />
-          )
-        }
             locInput0a={this.state.locInput0a}
             locInput0b={this.state.locInput0b}
             locationLoading={locationLoading}
           />
         ) : (
-          !this.state.result && <div className="loading">Loading...</div>
+          !this.state.result && (
+            <Spinner fadeIn="none" name="pulse" color={colors.blue} />
+          )
         )}
         <Maps
           result={this.state.result}
           midptInfo={this.state.midptInfo}
           onChoose={this.onChoose}
-          />
+        />
       </div>
     );
   }
 }
-
-// <GoogleAuth
-//   signOut={this.signOut}
-//   signedInUserEmail={signedInUserEmail}
-//   signedInUserFirstName={signedInUserFirstName}
-//   signedInUserProfilePic={signedInUserProfilePic}
-//   initGoogleAuth={this.initGoogleAuth}
-//   />
 
 export default App;

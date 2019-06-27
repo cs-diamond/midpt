@@ -166,6 +166,8 @@ input[type="button"] {
   width: calc(100% - 60px);
   padding: 30px;
   @media only screen and (max-width: 800px) {
+    width: 100%;
+    margin: 0;
     box-sizing: border-box;
     padding: 20px 30px;
   }
@@ -243,6 +245,7 @@ input[type="button"] {
   width: calc(50% - 6px);
   @media only screen and (max-width: 800px) {
     width: 100%;
+    padding: 5px;
   }
 }
 
@@ -293,6 +296,7 @@ input:focus {
     outline: none;
   }
   @media only screen and (max-width: 800px) {
+      top: 35px;
       left: auto;
       right: 35px;
   }
@@ -523,7 +527,7 @@ input[type="button"].buttonNo {
 .yelps .locInput {
   width: 100%;
   margin-right: 0;
-
+}
 .scale-up-center {
 	-webkit-animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
 	        animation: scale-up-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;

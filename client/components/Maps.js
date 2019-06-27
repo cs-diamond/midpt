@@ -12,7 +12,7 @@ const GoogleMapsAPI = new Promise((res, err) => {
   script.async = true;
   script.src =
     'https://maps.googleapis.com/maps/api/js?key=' +
-    'AIzaSyB8aYME45dFybrKuQfTwUYigAQS4nzbBFA';
+    'AIzaSyC7LWO6YTQX6EzHTT3ZJVYON4UpQmnzHf0';
 });
 
 const Maps = props => {
