@@ -12,6 +12,8 @@ import colors from '../scss/colors';
 
 const YELP_CATEGORIES = ['Cafes', 'Restaurants', 'Bars'];
 
+// Hi
+
 class App extends Component {
   constructor(props) {
     super(props);
